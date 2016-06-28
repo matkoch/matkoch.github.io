@@ -1,0 +1,31 @@
+# main text of home
+name: Matthias Koch
+email: ithrowexceptions@gmail.com
+
+description: Matthias Koch's Blog
+bio: Software Developer living in Munich. Enthusiast about Testing, Clean Code and Productivity. 
+
+url: http://www.ithrowexceptions.com
+permalink: /:title/
+
+gravatar: 7be25963f90c1dcf7fc5e9ec21d1077a
+analytics-google: 'UA-79606009-1'
+disqus: ithrowexceptions
+
+twitter: matkoch87
+linkedin: matthias-koch-b5923755
+spotify: ithrowexceptions
+stackoverflow: 568266/matthias
+github: matkoch
+
+gems:
+  - jemoji
+  - jekyll-mentions
+  - jekyll-seo-tag
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-paginate
+
+jekyll-mentions:
+    base_url: https://github.com
