@@ -1,0 +1,16 @@
+<section class="author{% if site.disqus == false %} no-disqus{% endif %}">
+    <div class="toleft">
+        <img class="selfie" src="http://www.gravatar.com/avatar/{{ site.gravatar }}.png?s=120" alt="{{ site.name }}">
+    </div>
+
+    <div class="toright">
+        <h4 class="name">{{ site.name }}</h4>
+        <p class="bio">{{ site.bio }}</p>
+
+        <div class="share">
+            <a class="twitter" href="https://twitter.com/intent/tweet?text={{ site.url }}{{ page.url }} - {{ page.title }} by @{{ site.twitter }}">
+                <svg class="icon icon-twitter"><use xlink:href="#icon-twitter"></use></svg><span class="icon-twitter">Tweet</span>
+            </a>
+        </div>
+    </div>
+</section>

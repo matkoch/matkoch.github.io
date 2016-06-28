@@ -1,0 +1,18 @@
+{% if page.title == "Home" %}
+    {% assign link = '/about' %}
+    {% assign showSocial = true %}
+{% else %}
+    {% assign link = '/' %}
+    {% assign showSocial = false %}
+{% endif %}
+
+<header class="header-home {% if site.animation %}animated{% endif %}">
+
+    <a class="link" href="{{ site.url }}{{ link }}">
+        <img class="selfie" alt="{{ site.name }}" src="http://www.gravatar.com/avatar/{{ site.gravatar }}.png?s=120" />
+    </a>
+
+    {% if showSocial == true and false %}
+        {% include social-links.html %}
+    {% endif %}
+</header>  
