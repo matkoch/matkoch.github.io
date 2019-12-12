@@ -1,6 +1,10 @@
 ---
 title: Replacing Package References with Project References
-tags: MSBuild
+tags:
+- MSBuild
+- .NET
+- JetBrains Rider
+hidden: true
 mode: immersive
 header:
   theme: dark
@@ -22,7 +26,7 @@ Working on multi-repository projects can be difficult if there are NuGet package
 
     <PropertyGroup>
         <ReplacePackageReferences Condition="$(ReplacePackageReferences) == ''">True</ReplacePackageReferences>
-        <SolutionPath>$(MSBuildThisFileDirectory)\nuke.sln</SolutionPath>
+        <SolutionPath>$(MSBuildThisFileDirectory)\global.sln</SolutionPath>
     </PropertyGroup>
 
     <Choose>
