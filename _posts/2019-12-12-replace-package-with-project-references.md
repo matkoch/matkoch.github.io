@@ -17,7 +17,7 @@ article_header:
     src: assets/images/2019-12-12-replace-package-with-project-references.jpg
 ---
 
-Working on multi-repository projects can be difficult if there are NuGet package dependencies involved that need to 
+Working on multi-repository projects can be difficult if there are NuGet package dependencies involved that need to
 
 <!--more-->
 {% highlight xml linenos %}
