@@ -5,7 +5,7 @@
             function(element, index, array) {
                 var id = element.getAttribute("tweetID");
                 twttr.widgets.createTweet(
-                    id, tweet,
+                    id, element,
                     {
                         conversation : 'none',    // or all
                         cards        : 'hidden',  // or visible
