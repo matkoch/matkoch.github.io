@@ -19,6 +19,9 @@ article_header:
 
 Working on multi-repository projects can be difficult if there are NuGet package dependencies involved that need to
 
+
+<div id="tweet" tweetID="515490786800963584"></div>
+
 <!--more-->
 {% highlight xml linenos %}
 <?xml version="1.0" encoding="utf-8"?>
