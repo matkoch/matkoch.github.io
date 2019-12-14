@@ -1,5 +1,5 @@
 ---
-title: Working with Multi-Repository Projects
+title: Multi-Repository Projects
 tags:
 - MSBuild
 - .NET
@@ -21,7 +21,7 @@ Problem: You're working on a multi-repository project. Each of the repositories 
 
 ## Resolve Package References to Projects
 
-I was spending quite some time on Google, trying to find how 
+I was spending quite some time on Google, trying to find how ttest
 
 [customize your build](https://docs.microsoft.com/en-us/visualstudio/msbuild/customize-your-build) with `Directory.Build.props` and `Directory.Build.targets` ... two files that will get auto
 
@@ -74,3 +74,5 @@ I was spending quite some time on Google, trying to find how
 
 </Project>
 {% endhighlight %}
+
+## 
