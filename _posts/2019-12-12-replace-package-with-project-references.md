@@ -17,6 +17,8 @@ article_header:
     src: assets/images/2019-12-12-replace-package-with-project-references.jpg
 ---
 
+Test
+
 Problem: You're working on a multi-repository project. Each of the repositories can release NuGet packages on its own. However, those repositories also define dependencies between each other – read core and leaf projects. In such cases, it's hard to keep an overview, not even to mention doing cross-repository refactorings. In this blog post we'll look at a few options how to effectively work with such architectures.
 
 ## Resolve Package References to Projects
