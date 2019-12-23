@@ -20,7 +20,7 @@ article_header:
     src: assets/images/2019-12-12-replace-package-with-project-references.jpg
 ---
 
-If you dive into the DevOps world, chances are high you meet YAML around the next corner. 
+If you dive into the DevOps world, chances are high you'll meet YAML just around the next corner. 
 
 - Azure Pipelines
 - Bitrise
