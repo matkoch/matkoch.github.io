@@ -45,7 +45,7 @@ I was even recommending Marta to a colleague of mine, with whom I occasionally s
 
 ![Searching in popups](/assets/images/2020-01-14-marta/yan.png){:width="550px" .shadow}
 
-Okay, this is crazy! 🤯 My initial thought was not too bad. Yan is working in the Kotlin team.
+Okay, this is crazy! 🤯 My initial thought was not too bad. Yan is working in the Kotlin team. The (developer) world is kinda small. 😅
 
 ## More Configuration
 
