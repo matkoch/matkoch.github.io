@@ -37,9 +37,9 @@ My first and foremost thought about Marta was: *Wow! This feels a bit like worki
 
 ![Searching and selecting](/assets/images/2020-01-14-marta/searching01.gif){:width="650px" .shadow}
 
-Another reason: popups can be **filtered by just typing**:
+Another reason is the **Lookup search**, which pops up in the upper middle of the application and allows to search for just anything:
 
-![Searching in popups](/assets/images/2020-01-14-marta/searching02.png){:width="650px" .shadow}
+![Lookup search](/assets/images/2020-01-14-marta/lookup.png){:width="650px" .shadow}
 
 I was even recommending Marta to a colleague of mine, with whom I occasionally share tool recommendations. Then, another week later, while I was looking for the [public repository](https://github.com/marta-file-manager/marta-issues) to raise an [issue](https://github.com/marta-file-manager/marta-issues/issues/623).
 
