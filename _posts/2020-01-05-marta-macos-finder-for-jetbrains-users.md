@@ -29,21 +29,21 @@ I tried several alternatives, like [TotalFinder](https://totalfinder.binaryage.c
 
 At some point, [Marta](https://marta.yanex.org/) popped up in my Twitter timeline. I don't remember who posted it. It might have been a colleague. Marta comes with dual mode (similar to [FarManager](https://www.farmanager.com/)), an integrated terminal, tab support, customizable columns, and DirStat (similar to [WinDirStat](https://windirstat.net/)):
 
-![Marta overview](/assets/images/2020-01-14-marta/overview.png){:height="400px" .shadow}
+![Marta overview](/assets/images/2020-01-14-marta/overview.png){:width="650px" .shadow}
 
 ## Surprising background
 
 My first and foremost thought about Marta was: *Wow! This feels a bit like working in JetBrains Rider / IntelliJ IDEA.* That was mostly because of the way how you search and select file items. Just **type a search term**, which will be shown in the bottom right, and then **navigate with arrow keys** through the results:
 
-![Searching and selecting](/assets/images/2020-01-14-marta/searching01.gif){:height="400px" .shadow}
+![Searching and selecting](/assets/images/2020-01-14-marta/searching01.gif){:width="650px" .shadow}
 
 Another reason: popups can be **filtered by just typing**:
 
-![Searching in popups](/assets/images/2020-01-14-marta/searching02.png){:height="400px" .shadow}
+![Searching in popups](/assets/images/2020-01-14-marta/searching02.png){:width="650px" .shadow}
 
 I was even recommending Marta to a colleague of mine, with whom I occasionally share tool recommendations. Then, another week later, while I was looking for the [public repository](https://github.com/marta-file-manager/marta-issues) to raise an [issue](https://github.com/marta-file-manager/marta-issues/issues/623).
 
-![Searching in popups](/assets/images/2020-01-14-marta/yan.png){:height="300px" .shadow}
+![Searching in popups](/assets/images/2020-01-14-marta/yan.png){:width="500px" .shadow}
 
 Okay, this is crazy! 🤯 My initial thought was not too bad. Yan is working in the Kotlin team.
 
