@@ -3,7 +3,6 @@ title: Marta - The MacOS Finder for developers
 tags:
 - MacOS
 - Tools
-hidden: true
 mode: immersive
 header:
   theme: dark
@@ -75,8 +74,7 @@ environment {
 
 keyBindings {
     "Shift+Cmd+A" { id "core.actions" }
-    "Cmd+T" { id "core.lookup" }
-    "Cmd+Shift+T" { id "core.lookup.here" }
+    "Cmd+Shift+T" { id "core.lookup" }
     
     "Cmd+1" { id "core.favorites" }
     "Cmd+E" { id "core.recent.directories" }
