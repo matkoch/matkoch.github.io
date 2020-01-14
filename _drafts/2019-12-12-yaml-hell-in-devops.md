@@ -28,6 +28,8 @@ If you dive into the DevOps world, chances are high you'll meet YAML just around
 - AppVeyor
 - CircleCI
 
+This "Configuration as Code" is a lie
+
 
 https://twitter.com/onovotny/status/1207433967097520129
 https://twitter.com/csharpfritz/status/1207434317179305986
