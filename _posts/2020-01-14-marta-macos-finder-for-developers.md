@@ -41,9 +41,9 @@ Another reason is the **Lookup search**, which pops up in the upper middle of th
 
 ![Lookup search](/assets/images/2020-01-14-marta/lookup.png){:width="650px" .shadow}
 
-I was even recommending Marta to a colleague of mine, with whom I occasionally share tool recommendations. Then, another week later, while I was looking for the [public repository](https://github.com/marta-file-manager/marta-issues) to raise an [issue](https://github.com/marta-file-manager/marta-issues/issues/623).
+I was even recommending Marta to a colleague of mine, with whom I occasionally share tool recommendations. Then, another week later, while I was looking for the [public repository](https://github.com/marta-file-manager/marta-issues) to raise an [issue](https://github.com/marta-file-manager/marta-issues/issues/623), I found a few information about the author:
 
-![Searching in popups](/assets/images/2020-01-14-marta/yan.png){:width="500px" .shadow}
+![Searching in popups](/assets/images/2020-01-14-marta/yan.png){:width="550px" .shadow}
 
 Okay, this is crazy! 🤯 My initial thought was not too bad. Yan is working in the Kotlin team.
 
