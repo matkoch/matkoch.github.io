@@ -62,7 +62,7 @@ window.Lazyload.js(SOURCES.jquery, function() {
 
 ***TL;DR: YAML can be a wolf in sheep’s clothing when used for CI infrastructure. Other alternatives include using TeamCity and its Kotlin DSL, or moving to build systems like CAKE or FAKE. Both approaches have their unique pros and cons. NUKE, of which I'm the author, provides a solution that combines the power of both - flexibility of a build system, and CI specific features like parallelization and build queue optimizations.***
 
-If you dive into the DevOps world, chances are high you **meet YAML around the next corner**. For some tools, like Docker and Kubernetes, I think it’s the perfect match. However, for CI infrastructure it usually becomes a huge PITA. And I'm actually not alone in thinking this. Last month, Jeff Fritz started a debate about [YAML in DevOps](https://twitter.com/csharpfritz/status/1207431413341081601). The general response can be summarized as:
+If you dive into the DevOps world, chances are high you **meet YAML around the next corner**. For some tools, like Docker and Kubernetes, I think it’s the perfect match. However, for CI infrastructure it usually becomes a huge PITA. And I'm actually not alone in thinking this. Recently, a tweet of Jeff Fritz started a debate about [YAML in DevOps](https://twitter.com/csharpfritz/status/1207431413341081601). The general agreement can be summarized as:
 
 <div class="tweet" tweetID="1207433967097520129">Welcome the world of YAML pain</div>
 
@@ -101,17 +101,17 @@ In my opinion, this is much better than YAML. We don’t have to commit our conf
 
 ## Getting into Build Systems
 
-If you’re a .NET developer, I can understand if you're feeling reluctant to use Kotlin DSL. After all, I’m a huge fan of the philosophy to use the same language for build implementation as for the rest of the project [^1]. Following this philosophy, and using build systems such as [FAKE](https://fake.build/), [CAKE](https://cakebuild.net/), or [BullsEye](https://github.com/adamralph/bullseye), ...
+If you’re a .NET developer, I can understand if you're feeling reluctant to use Kotlin DSL. After all, I’m a huge fan of the philosophy to use the same language for build implementation as for the rest of the project[^1]. Following this philosophy, and using build systems such as [FAKE](https://fake.build/), [CAKE](https://cakebuild.net/), or [BullsEye](https://github.com/adamralph/bullseye), ...
 
 [^1]: Credits to [Gary Ewan Park](https://twitter.com/gep13)
 
 <div class="tweet" tweetID="1207435056316375042">The the YAML is essentially: run build.cake</div>
 
-Great thing, right? We gain the benefit of being loosely coupled from the CI system, so we don't experience a vendor lock-in, and can easily switch if we need to. Another plus, is that we can easily execute the build locally. However, this approach also comes with its drawbacks: **we deliberately avoid using features of the CI system** like parallelization of tasks or build queue optimization. We basically gained portability and ease of use at the cost of provided value of the CI system.
+Great thing, right? We gain the **benefit of being loosely coupled** from the CI system, so we don't experience a vendor lock-in, and can easily switch if we need to. Another plus, is that we can easily execute the build locally. However, this approach also comes with its drawbacks: **we deliberately avoid using features of the CI system** like parallelization of tasks or build queue optimization. We basically gained portability and ease of use at the cost of provided value of the CI system.
 
 ## Merging Approaches
 
-Can there be a way to get the **best of both worlds** without any of the disadvantages? For sure. What it boils down to is basically what Damian Hickey suggested:
+Can there be a way to get the **best of both worlds** without any of the disadvantages? For sure. What it boils down to is what Damian Hickey suggested a little earlier already:
 
 <div class="tweet" tweetID="1168551652221235205">Going to see if I can run individual bullseye defined targets-as-steps. Will share how I get on.</div>
 
