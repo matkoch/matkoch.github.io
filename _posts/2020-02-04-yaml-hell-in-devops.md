@@ -231,7 +231,7 @@ One remaining issue is to **allow different build steps to share state** on a .N
 
 ## Conclusion
 
-Extending build systems to generate CI configuration files is a new and interesting way to provide a better developer experience when building in different environments. Publishing artifacts, nightly builds, parallelization, build queue optimizations, and other gems are just ~~a step~~ an attribute away. Also, we're always free to switch our CI system  **Try it and let [NUKE](https://nuke.build) save you from configuration and refactoring headache!**
+Extending build systems to generate CI configuration files is a new and interesting way to provide a better developer experience when building in different environments. Publishing artifacts, nightly builds, parallelization, build queue optimizations, and other gems are just ~~a step~~ an attribute away. We don't need to know about CI systems inside out, and there is much less effort involved when we switch between them. **Skip the YAML pain and try [NUKE](https://nuke.build)!**
 
 <!--
 - https://twitter.com/totollygeek/status/1210633275938607104
