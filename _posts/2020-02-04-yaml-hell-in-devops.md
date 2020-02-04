@@ -7,8 +7,6 @@ tags:
 - DevOps
 - GitHub Actions
 - Kotlin
-- NUKE
-- Refactorings
 - TeamCity
 mode: immersive
 header:
@@ -58,7 +56,7 @@ window.Lazyload.js(SOURCES.jquery, function() {
   }
 </style>
 
-***TL;DR: YAML can be a wolf in sheep’s clothing when used for CI infrastructure. Other alternatives include using TeamCity and its Kotlin DSL, or moving to build systems like CAKE or FAKE. Both approaches have their unique pros and cons. NUKE, of which I'm the author, provides a solution that combines the power of both - flexibility of a build system, and CI specific features like parallelization and build queue optimizations.***
+***TL;DR: YAML can be a wolf in sheep’s clothing when used for CI infrastructure. Other alternatives include moving to build systems like CAKE/FAKE, or using TeamCity and its Kotlin DSL. Both approaches have their unique pros and cons. NUKE, of which I'm the author, provides a solution that combines the power of both - flexibility of a build system, and CI specific features like parallelization and build queue optimizations.***
 
 If you dive into the DevOps world, chances are high you **meet YAML around the next corner**. For some tools, like Docker and Kubernetes, I think it's a good match. However, for CI infrastructure it often becomes a nightmare, which is why I call it _YAML Hell_ (similar to [DLL Hell](https://en.wikipedia.org/wiki/DLL_Hell)). And actually, I'm not alone having those feelings. Recently, a tweet of Jeff Fritz started a debate about [YAML in DevOps](https://twitter.com/csharpfritz/status/1207431413341081601), to which the general agreement can be summarized as:
 
@@ -83,7 +81,7 @@ While I see how YAML configuration can be attractive, I truly believe that for C
 - **It's not refactoring-safe.** This is a matter of tooling again. Whenever we're dealing with IDs and their references, the best choice you have is _Search & Replace_. This should only be the last resort.
 - **It's declarative. Not imperative.** Not everyone needs that, but usually, there's a time when you want to iterate over a collection, filter items, write some more complex conditions, and other funky stuff. YAML is just the wrong format for that.
 
-And one more important fact besides: each CI system has its very own format. Switching between different CI systems becomes non-trivial, as we have to rewrite to complete configuration. Some built-in tasks might even be unavailable on the next system, which forces us to rewrite them ourselves.
+And one more important fact besides: each CI system has its very own format. Switching between different CI systems becomes non-trivial, as we have to rewrite the complete configuration.
 
 ## Modern Configuration as Code
 
