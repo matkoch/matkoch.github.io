@@ -143,7 +143,7 @@ partial class Build : NukeBuild
 }
 {% endhighlight %}
 
-In the example above, we're adding the `GitHubActionsAttribute` to our build class to define a new workflow called `continuous`. The workflow invokes the `Test` and `Pack` targets on 3 different images whenever we push new changes. Additionally, we import the secrets `GitterAuthToken` and `SlackWebhook`. Note that everything is **refactoring-safe**! Images and triggers are defined via enumerations. The targets and parameters are referenced with the `nameof` operator. If we rename them, our CI configuration will change as well. Speaking of the YAML configuration, here is the _generated_ configuration file for GitHub Actions from above:
+In the example above, we're adding the `GitHubActionsAttribute` to our build class (Line 1) to define a new workflow called `continuous`. The workflow invokes the `Test` and `Pack` targets (Line 6) on 2 different images (Line 3-4) whenever we push new changes (Line 5). Additionally, we import the secrets `GitterAuthToken` and `SlackWebhook` (Line 7). Note that everything is **refactoring-safe**! Images and triggers are defined via enumerations. The targets and parameters are referenced with the `nameof` operator. If we rename them, our CI configuration will change as well. Finally, here's the generated YAML file based on our attribute:
 
 {% highlight yaml linenos %}
 {% raw %}
