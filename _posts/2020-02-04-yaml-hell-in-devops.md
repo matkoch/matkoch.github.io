@@ -7,6 +7,7 @@ tags:
 - DevOps
 - GitHub Actions
 - Kotlin
+- NUKE
 - TeamCity
 mode: immersive
 header:
@@ -105,7 +106,7 @@ If you’re a .NET developer, I can understand if you're feeling reluctant to us
 
 <div class="tweet" tweetID="1207435056316375042">The the YAML is essentially: run build.cake</div>
 
-Great thing, right? We gain the **benefit of being loosely coupled** from the CI system, so we don't experience a vendor lock-in, and can easily switch if we need to. Another plus, is that we can easily execute the build locally. However, this approach also comes with its drawbacks: **we deliberately avoid using features of the CI system** like parallelization of tasks or build queue optimization. We basically gained portability and ease of use at the cost of provided value of the CI system.
+Great thing, right? We gain the **benefit of being loosely coupled** from the CI system, so we don't experience a vendor lock-in, and can easily switch if we need to. Another plus, is that we can easily **execute the build locally**, which makes troubleshooting much easier. However, this approach also comes with a drawback: **we deliberately avoid using features of the CI system** like parallelization of tasks or build queue optimization. We basically gained portability and ease of use at the cost of provided value of the CI system.
 
 ## Merging Approaches
 
@@ -119,7 +120,7 @@ However, even if the CI configuration is quite simple, writing it ourselves **st
 
 ## Integration with NUKE
 
-[NUKE](https://nuke.build) is a build system that I'm working on, which is similar to CAKE and FAKE. One unique aspect to NUKE, is that it follows an **approach that generates the CI configuration** from the C# build implementation itself. Let's see how we can easily use GitHub Actions for our CI build:
+[NUKE](https://nuke.build) is a build system that I'm working on, which is similar to CAKE and FAKE. One unique aspect to NUKE, is that it follows an approach that **generates the CI configuration** from the C# build implementation itself. Currently supporting [Azure Pipelines](https://github.com/nuke-build/nuke/blob/develop/azure-pipelines.yml), [AppVeyor](https://github.com/nuke-build/nuke/blob/develop/appveyor.yml), [GitHub Actions](https://github.com/nuke-build/nuke/blob/develop/.github/workflows/continuous.yml), and [TeamCity](https://github.com/nuke-build/nuke/blob/develop/.teamcity/settings.kts). Let's start with a more simple example and see how we can use GitHub Actions for our CI build:
 
 {% highlight csharp linenos %}
 [GitHubActions(
@@ -222,7 +223,7 @@ Here are a few illustrations how things will look like in TeamCity. Including th
   <div class="swiper__button swiper__button--next fas fa-chevron-right"></div>
 </div>
 
-If you want to get more into NUKE and its CI integration, check out the [documentation](http://www.nuke.build/docs/authoring-builds/ci-integration.html). As of writing this article, it supports [Azure Pipelines](https://github.com/nuke-build/nuke/blob/develop/azure-pipelines.yml), [AppVeyor](https://github.com/nuke-build/nuke/blob/develop/appveyor.yml), [GitHub Actions](https://github.com/nuke-build/nuke/blob/develop/.github/workflows/continuous.yml), and [TeamCity](https://github.com/nuke-build/nuke/blob/develop/.teamcity/settings.kts).
+If you want to learn more about NUKE and its CI integration, check out the [documentation](http://www.nuke.build/docs/authoring-builds/ci-integration.html).
 
 One remaining issue is to **allow different build steps to share state** on a .NET process level. For instance, changes to a field of type `List<Data>` should be available in the next build step. A possible solution is to deserialize and serialize the build object before and after a build is invoked. TeamCity actually provides a great extension point with the `.teamcity` directory, which is automatically published as hidden artifact. Other CI systems have not been evaluated for this functionality yet.
 
