@@ -4,6 +4,7 @@ tags:
 - .NET
 - AppVeyor
 - Azure Pipelines
+- Continuous Integration
 - DevOps
 - GitHub Actions
 - Kotlin
