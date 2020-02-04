@@ -33,7 +33,6 @@ window.Lazyload.js(SOURCES.jquery, function() {
 
 <style>
   .swiper-demo {
-    height: 400px;
     margin: 30px auto;
   }
   .swiper-demo .swiper__slide {
@@ -62,7 +61,7 @@ window.Lazyload.js(SOURCES.jquery, function() {
 
 ***TL;DR: YAML can be a wolf in sheep’s clothing when used for CI infrastructure. Other alternatives include using TeamCity and its Kotlin DSL, or moving to build systems like CAKE or FAKE. Both approaches have their unique pros and cons. NUKE, of which I'm the author, provides a solution that combines the power of both - flexibility of a build system, and CI specific features like parallelization and build queue optimizations.***
 
-If you dive into the DevOps world, chances are high you **meet YAML around the next corner**. For some tools, like Docker and Kubernetes, I think it’s the perfect match. However, for CI infrastructure it usually becomes a huge PITA. And I'm actually not alone in thinking this. Recently, a tweet of Jeff Fritz started a debate about [YAML in DevOps](https://twitter.com/csharpfritz/status/1207431413341081601). The general agreement can be summarized as:
+If you dive into the DevOps world, chances are high you **meet YAML around the next corner**. For some tools, like Docker and Kubernetes, I think it's a good match. However, for CI infrastructure it often becomes a nightmare, which is why I call it _YAML Hell_ (similar to [DLL Hell](https://en.wikipedia.org/wiki/DLL_Hell)). And actually, I'm not alone having those feelings. Recently, a tweet of Jeff Fritz started a debate about [YAML in DevOps](https://twitter.com/csharpfritz/status/1207431413341081601), to which the general agreement can be summarized as:
 
 <div class="tweet" tweetID="1207433967097520129">Welcome the world of YAML pain</div>
 
@@ -81,9 +80,11 @@ Some try to stay clear from YAML, only to replace it with other suboptimal solut
 While I see how YAML configuration can be attractive, I truly believe that for CI/CD purpose, this is only because the sample pipelines in talks and blog posts are often just that – samples. [YAML is in disrepute](https://noyaml.com/) for several reasons. Some of the most important ones, in particular for CI/CD, are:
 
 - **It imposes long feedback loops.** Typically, the only way to test your configuration, is to commit your changes to the repository. Then the CI servers needs to pick up changes, and finally you might need to wait until the agent is available to trigger a new build. This adds up to a lot of time, especially given the following pitfalls.
-- **It's error-prone.** Missing syntax highlighting makes the process feel clunky. We might indent too much or too little, mistype a well-known property, or forget to escape properly. As a C# developer, this is almost unacceptable.
+- **It's error-prone.** We might indent too much or too little, mistype a well-known property, or forget to escape properly without even knowing. YAML is almost always valid, and there is no proper syntax highlighting. There are schema files that enable rudimentary code completion, but as a C# developer, this still feels clunky.
 - **It's not refactoring-safe.** This is a matter of tooling again. Whenever we're dealing with IDs and their references, the best choice you have is _Search & Replace_. This should only be the last resort.
-- **It's declarative. Not imperative.** Not everyone needs that, but usually, there's a time when you want to iterate over a collection, filter items, write some more complex conditions, and other funky stuff. YAML just limits your opportunities to achieve that.
+- **It's declarative. Not imperative.** Not everyone needs that, but usually, there's a time when you want to iterate over a collection, filter items, write some more complex conditions, and other funky stuff. YAML is just the wrong format for that.
+
+And one more important fact besides: each CI system has its very own format. Switching between different CI systems becomes non-trivial, as we have to rewrite to complete configuration. Some built-in tasks might even be unavailable on the next system, which forces us to rewrite them ourselves.
 
 ## Modern Configuration as Code
 
@@ -143,7 +144,7 @@ partial class Build : NukeBuild
 }
 {% endhighlight %}
 
-In the example above, we're adding the `GitHubActionsAttribute` to our build class to define a new workflow called `continuous`. The workflow invokes the `Test` and `Pack` targets on 3 different images whenever we push new changes. Additionally, we import the secrets `GitterAuthToken` and `SlackWebhook`. Note that everything is **refactoring-safe**! Images and triggers are defined via enumerations. The targets and parameters are referenced with the `nameof` operator. If we rename them, our CI configuration will change as well. Speaking of the YAML configuration, here it is:
+In the example above, we're adding the `GitHubActionsAttribute` to our build class to define a new workflow called `continuous`. The workflow invokes the `Test` and `Pack` targets on 3 different images whenever we push new changes. Additionally, we import the secrets `GitterAuthToken` and `SlackWebhook`. Note that everything is **refactoring-safe**! Images and triggers are defined via enumerations. The targets and parameters are referenced with the `nameof` operator. If we rename them, our CI configuration will change as well. Speaking of the YAML configuration, here is the _generated_ configuration file for GitHub Actions from above:
 
 {% highlight yaml linenos %}
 {% raw %}
@@ -175,7 +176,7 @@ jobs:
 {% endraw %}
 {% endhighlight %}
 
-A more integrative example is the following usage of the `TeamCityAttribute` that generates a configuration for TeamCity:
+A more complex example is the following usage of the `TeamCityAttribute` that generates a configuration for TeamCity:
 
 {% highlight csharp linenos %}
 
@@ -206,10 +207,10 @@ partial class Build : NukeBuild
 
 This time we won't look at the generated code, but point out individual features:
 
-- **Nightly builds** are defined via `NightlyTriggeredTargets` property (Line 5). Again, we can reference the `Test` target with the `nameof` operator. Internally, NUKE will generate a [scheduled trigger](https://www.jetbrains.com/help/teamcity/configuring-schedule-triggers.html).
-- **Manual builds** are defined via `ManuallyTriggeredTargets` (Line 6). In this case, we choose that the `Publish` target is represented as a [deployment build configuration](https://www.jetbrains.com/help/teamcity/deployment-build-configuration.html).
-- **Parallelization** can be achieved in three easy steps. Firstly, we declare a `TestPartition` object along with its size (Line 11). Secondly, we assign the partition to the `Test` target by calling `Partition(() => TestPartition)` (Line 18). This causes TeamCity to use a [composite build configuration](https://www.jetbrains.com/help/teamcity/composite-build-configuration.html) with multiple sub-configurations according to the partition size. In the last step, we use the partition to get the current slice of test projects for the currently running sub-configuration (Line 12).
-- **Publishing and consuming artifacts** is just a matter of calling `Produces(...)` and `Consumes(...)` (Line 16-17). This can be used to forward data to a subsequent target, or just to provide file downloads through the TeamCity UI.
+- **Nightly builds** are defined via `NightlyTriggeredTargets` property (Line 4). Again, we can reference the `Test` target with the `nameof` operator. Internally, NUKE will generate a [scheduled trigger](https://www.jetbrains.com/help/teamcity/configuring-schedule-triggers.html).
+- **Manual builds** are defined via `ManuallyTriggeredTargets` (Line 5). In this case, we choose that the `Publish` target is represented as a [deployment build configuration](https://www.jetbrains.com/help/teamcity/deployment-build-configuration.html).
+- **Parallelization** can be achieved in three easy steps. Firstly, we declare a `TestPartition` object along with its size (Line 10). Secondly, we assign the partition to the `Test` target by calling `Partition(() => TestPartition)` (Line 17). This causes TeamCity to use a [composite build configuration](https://www.jetbrains.com/help/teamcity/composite-build-configuration.html) with multiple sub-configurations according to the partition size. In the last step, we use the partition to get the current slice of test projects for the currently running sub-configuration (Line 11).
+- **[Publishing and consuming artifacts](https://www.jetbrains.com/help/teamcity/build-artifact.html)** is just a matter of calling `Produces(...)` and `Consumes(...)` (Line 15-16). This can be used to forward data to a subsequent target, or just to provide file downloads through the TeamCity UI.
 - **[Build queue optimization](https://www.jetbrains.com/help/teamcity/build-queue.html)** is more of an implicit feature in TeamCity that comes along with the separation of different targets. Whenever a target has already been executed and could be reused, for instance when the affecting files haven't changed, TeamCity will happily do that and save you resources.
 
 Here are a few illustrations how things will look like in TeamCity. Including the _Run Build_ dialog, that automatically exposes [all parameters declared](http://www.nuke.build/docs/authoring-builds/parameter-declaration.html) in the build class:
@@ -230,7 +231,7 @@ One remaining issue is to **allow different build steps to share state** on a .N
 
 ## Conclusion
 
-Extending build systems to generate CI configuration files is a new and interesting way to provide a better developer experience when building in different environments. Publishing artifacts, nightly builds, parallelization, build queue optimizations, and other gems are just ~~a step~~ an attribute away. **Try it and let [NUKE](https://nuke.build) save you from configuration and refactoring headache!**
+Extending build systems to generate CI configuration files is a new and interesting way to provide a better developer experience when building in different environments. Publishing artifacts, nightly builds, parallelization, build queue optimizations, and other gems are just ~~a step~~ an attribute away. Also, we're always free to switch our CI system  **Try it and let [NUKE](https://nuke.build) save you from configuration and refactoring headache!**
 
 <!--
 - https://twitter.com/totollygeek/status/1210633275938607104
