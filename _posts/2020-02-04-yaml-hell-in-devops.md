@@ -10,7 +10,6 @@ tags:
 - NUKE
 - Refactorings
 - TeamCity
-hidden: true
 mode: immersive
 header:
   theme: dark
