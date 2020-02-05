@@ -1,5 +1,5 @@
 ---
-title: YAML Hell in DevOps
+title: Overcoming YAML Hell in DevOps
 tags:
 - .NET
 - AppVeyor
