@@ -1,5 +1,5 @@
 ---
-title: Overcoming YAML Hell in DevOps
+title: Overcoming YAML Pain in Continuous Integration
 tags:
 - .NET
 - AppVeyor
@@ -60,7 +60,7 @@ window.Lazyload.js(SOURCES.jquery, function() {
 
 ***TL;DR: YAML can be a wolf in sheep’s clothing when used for CI infrastructure. Other alternatives include moving to build systems like CAKE/FAKE, or using TeamCity and its Kotlin DSL. Both approaches have their unique pros and cons. NUKE, of which I'm the author, provides a solution that combines the power of both - flexibility of a build system, and CI specific features like parallelization and build queue optimizations.***
 
-If you dive into the DevOps world, chances are high you **meet YAML around the next corner**. For some tools, like Docker and Kubernetes, I think it's a good match. However, for CI infrastructure it often becomes a nightmare, which is why I call it _YAML Hell_ (similar to [DLL Hell](https://en.wikipedia.org/wiki/DLL_Hell)). And actually, I'm not alone having those feelings. Recently, a tweet of Jeff Fritz started a debate about [YAML in DevOps](https://twitter.com/csharpfritz/status/1207431413341081601), to which the general agreement can be summarized as:
+If you dive into the DevOps world, chances are high you **meet YAML around the next corner**. For some tools, like Docker and Kubernetes, I think it's a good match. However, for CI infrastructure it often becomes a nightmare, and actually, I'm not alone having such feelings. Recently, a tweet of Jeff Fritz started a debate about [YAML in DevOps](https://twitter.com/csharpfritz/status/1207431413341081601), to which the general agreement can be summarized as:
 
 <div class="tweet" tweetID="1207433967097520129">Welcome the world of YAML pain</div>
 
