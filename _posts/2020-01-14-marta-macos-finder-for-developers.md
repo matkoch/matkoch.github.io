@@ -1,5 +1,5 @@
 ---
-title: Marta - The MacOS Finder for developers
+title: Marta - MacOS Finder for developers
 key: marta-macos-finder-for-developers
 tags:
 - MacOS
