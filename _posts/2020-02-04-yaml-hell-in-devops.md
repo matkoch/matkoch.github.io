@@ -1,5 +1,6 @@
 ---
 title: Overcoming YAML Pain in Continuous Integration
+key: yaml-hell-in-devops
 tags:
 - .NET
 - AppVeyor
