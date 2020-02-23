@@ -1,5 +1,5 @@
 ---
-title: Overcoming YAML Pain in Continuous Integration
+title: Overcoming YAML Pain in CI/CD
 key: yaml-hell-in-devops
 tags:
 - .NET
@@ -116,9 +116,7 @@ Can there be a way to get the **best of both worlds** without any of the disadva
 
 <div class="tweet" tweetID="1168551652221235205">Going to see if I can run individual bullseye defined targets-as-steps. Will share how I get on.</div>
 
-Meaning that we use both, a CI configuration and a build system, whereas the **CI configuration defines multiple steps, each invoking the build system with a separate target**. This way, we can get much better log output.
-
-However, even if the CI configuration is quite simple, writing it ourselves **still has the potential to break things**. For instance, when a target or input parameter name gets changed, we need to update configuration. Secondly, it's **hard to share state** between different targets invocations. For instance, one target might calculate an in-memory list, which should be reported in the next target. How would that work?
+Meaning that we use both, a CI configuration and a build system, whereas the **CI configuration defines multiple steps, each invoking the build system with a separate target**. Typically, we get much better log output this way, and also allow the CI system to gather statistical data. However, even if the CI configuration is quite simple, writing it ourselves **still has the potential to break things**. For instance, when a target or input parameter name gets changed, we need to update configuration. Secondly, it's **hard to share state** between different targets invocations. For instance, one target might calculate an in-memory list, which should be reported in the next target. How would that work?
 
 ## Integration with NUKE
 
