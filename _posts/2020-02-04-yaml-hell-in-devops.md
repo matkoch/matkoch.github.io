@@ -1,5 +1,5 @@
 ---
-title: Overcoming YAML Pain in CI/CD
+title: Overcoming YAML Pain in Continuous Integration
 key: yaml-hell-in-devops
 tags:
 - .NET
