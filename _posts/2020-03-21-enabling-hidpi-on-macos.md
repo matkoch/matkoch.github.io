@@ -110,7 +110,7 @@ In my case, the applied changes are saved to `/System/Library/Displays/Contents/
 </plist>
 ```
 
-There's an article describing [how those values are encoded](https://comsystoreply.de/blog-post/force-hidpi-resolutions-for-dell-u2515h-monitor), but for me they seem to be a bit too short. Whatever! I also copied the `scale-resolution` entries to my MacBooks own override file, to allow setting the same resolution on both.
+There's an article describing [how those values are encoded](https://comsystoreply.de/blog-post/force-hidpi-resolutions-for-dell-u2515h-monitor), but for me they seem to be a bit too short. Whatever! I also copied the `scale-resolution` entries to my MacBooks own override file located at `/System/Library/Displays/Contents/Resources/Overrides/DisplayVendorID-610/DisplayProductID-a03e`, to allow setting the same resolution on both.
 
 ### Side-Effects
 
