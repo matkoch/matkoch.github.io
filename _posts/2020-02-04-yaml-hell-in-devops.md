@@ -1,5 +1,5 @@
 ---
-title: Overcoming YAML Pain in Continuous Integration
+title: Overcoming YAML Pain in CI/CD
 key: yaml-hell-in-devops
 tags:
 - .NET
@@ -64,6 +64,10 @@ window.Lazyload.js(SOURCES.jquery, function() {
 If you dive into the DevOps world, chances are high you **meet YAML around the next corner**. For some tools, like Docker and Kubernetes, I think it's a good match. However, for CI infrastructure it often becomes a nightmare, and actually, I'm not alone having such feelings. Recently, a tweet of Jeff Fritz started a debate about [YAML in DevOps](https://twitter.com/csharpfritz/status/1207431413341081601), to which the general agreement can be summarized as:
 
 <div class="tweet" tweetID="1207433967097520129">Welcome the world of YAML pain</div>
+
+Here's another one:
+
+<div class="tweet" tweetID="1237145762229673984">YAML CAN KISS MY &SS</div>
 
 Many of us only use YAML reluctantly. Personally, I would even say that the idea of _Configuration as Code_ is a lie, because it doesn't feel like coding (more about this in the next section). Yet, almost every CI/CD service out there is YAML-first:
 
