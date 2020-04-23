@@ -65,10 +65,6 @@ If you dive into the DevOps world, chances are high you **meet YAML around the n
 
 <div class="tweet" tweetID="1207433967097520129">Welcome the world of YAML pain</div>
 
-Here's another one:
-
-<div class="tweet" tweetID="1237145762229673984">YAML CAN KISS MY &SS</div>
-
 Many of us only use YAML reluctantly. Personally, I would even say that the idea of _Configuration as Code_ is a lie, because it doesn't feel like coding (more about this in the next section). Yet, almost every CI/CD service out there is YAML-first:
 
 - [Azure Pipelines](https://docs.microsoft.com/en-us/azure/devops/pipelines)
@@ -78,6 +74,12 @@ Many of us only use YAML reluctantly. Personally, I would even say that the idea
 - [AppVeyor](https://www.appveyor.com/docs/)
 
 Some try to stay clear from YAML, only to replace it with other suboptimal solutions. For instance, Jenkins uses a Groovy-flavoured configuration files, which isn't really great either.
+
+By the way, Azure Pipelines actually provides some [better tooling around editing YAML](https://twitter.com/AzureDevOps/status/1117869418514489346), but apparently, it doesn't really help:
+
+<div class="tweet" tweetID="1237145762229673984">YAML CAN KISS MY &SS</div>
+
+But let's try getting more to the bottom of this.
 
 ## What's wrong with YAML
 
