@@ -25,7 +25,7 @@ article_header:
   }
 </style>
 
-Recently, the dotnet team announced that they'll [consolidate .NET repositories](https://github.com/dotnet/announcements/issues/119) hosted on GitHub.
+Some time ago, the dotnet team announced that they'll [consolidate .NET repositories](https://github.com/dotnet/announcements/issues/119) hosted on GitHub.
 
 dotnet/coreclr + dotnet/corefx -> dotnet/platform
 dotnet/toolset + dotnet/sdk -> dotnet/cli
@@ -45,7 +45,7 @@ Problem: You're working on a multi-repository project. Each of the repositories 
 
 [Why not to use them?](https://github.com/dotnet/announcements/issues/119)
 - **Avoiding confusion.** The more repositories exist, the more possible places a user has to raise issues. Many times, issues will end up in the wrong repository.
-- **Pull-requests across repositories.** New features or even bug-fixes can require changes in multiple repositories. Synchronizing when PRs get merged or rejected can become a real struggle.
+- **Pull-requests across repositories.** New features or even bug fixes can require changes in multiple repositories. Synchronizing when PRs get merged or rejected can be really difficult.
 - **Inconsistencies and duplicated efforts.** It's not always clear, which parts of our code should be shared and how. This applies to areas like CI/CD and other infrastructure, but also to smaller utility functions.
 
 **So the trend is not to use multiple repositories?** you might ask. If the .NET team decided to merge them into one, maybe it wasn't a good idea after all? The answer can be found in the FAQ section of the announcement: 
@@ -54,7 +54,17 @@ Problem: You're working on a multi-repository project. Each of the repositories 
 > **Does this mean there will be a single repo for all of .NET?**<br />
 > No. We will be reducing the number of repos that contribute to .NET, but currently we do not believe that going all the way down to one is the right answer.
 
-So generally speaking and actually as quite often in software engineering, there is no strict _DO_ or _DON'T_. It always depends on the particular circumstances, like requirements, the ecosystem in general, and involved parties.
+So generally speaking and actually as quite often in software engineering, there is no strict _DO_ or _DO NOT_. It always depends on the particular circumstances, like requirements, the ecosystem in general, and involved parties.
+
+## Why to use them
+
+So we've covered why they shouldn't be used. Let's look at the other side of the medal:
+
+- **Isolated work:** having clear boundaries can also mean to have more guidance and that there are less places to search for something.
+- **Separate changelog:** from release management perspective, having a dedicated changelog per sub-project is much more discoverable. We can immediately see how a project was affected (or if at all) in different versions. Global changelogs could use sections indeed, but I still see this as less convenient.
+- **Release cycles:** some parts of our product might require different release cycles. For instance, support for a particular third-party platform, like mobile operating systems, could require us to adapt to that.
+- **Versioning:** with different release cycles, it's reasonable to have a different versioning strategy. For instance, when writing extensions for Rider or Visual Studio, we could align with their major version number to 
+- **
 
 Why use them?
 - Isolated work
