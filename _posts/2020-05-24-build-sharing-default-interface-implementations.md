@@ -1,0 +1,235 @@
+---
+title: Build Sharing with Default Interface Implementations
+key: build-sharing-default-interface-implementations
+tags:
+- Build Automation
+- NUKE
+- C# 8
+- .NET
+mode: immersive
+header:
+  theme: dark
+article_header:
+  type: overlay
+  theme: dark
+  background_color: '#203028'
+  background_image:
+    gradient: 'linear-gradient(135deg, rgba(34, 0, 170 , .2), rgba(139, 34, 139, .2))'
+    src: assets/images/2020-05-24-build-sharing-default-interface-implementations/cover.jpg
+---
+
+***TL;DR: Default implementations in interfaces are a powerful approach for build sharing. They allow to overcome the diamond problem that we traditionally have when just using a hierarchy of base classes. Through its rich target definition model, NUKE ensures that predefined build steps can easily be extended without loosing any information.***
+
+C# 8 introduced a lot of [new language features](https://docs.microsoft.com/dotnet/csharp/whats-new/csharp-8) that can help[^1] us to make our codebase more readable, increase performance, or lower the memory footprint. However, one of these, namely [default implementations in interfaces](https://devblogs.microsoft.com/dotnet/default-implementations-in-interfaces/), seems to be more of a niche feature:
+
+[^1]: I've also written about [C# 8 language features in action](https://blog.jetbrains.com/dotnet/2019/04/24/indices-ranges-null-coalescing-assignments-look-new-language-features-c-8/) on our [JetBrains .NET Blog](https://blog.jetbrains.com/dotnet)
+
+<div class="tweet" tweetID="1248589138292604929">Every time a new version of C# comes out, I quickly find ways to adopt the newly introduced features into my code. C# 8 is an exception.
+
+Question: have you used default interface members in your code yet?</div>
+
+In the context of build automation and specifically [NUKE](https://nuke.build), they have been on my radar [for some time already](https://youtu.be/SVD70QYvQ6I?t=2741). Available time made it hard, but thanks to [Thomas Unger](https://github.com/tunger) this dream has [finally come true](https://github.com/nuke-build/nuke/pull/427)! 👏
+
+## Advanced Build Sharing
+
+Now how exactly are default implementations relevant to build sharing? Let us consider the following example:
+
+{% highlight csharp linenos %}
+interface IHasSolution
+{
+    [Solution]
+    Solution Solution => GetInjectionValue(() => Solution);
+}
+
+interface IBuild : IHasSolution
+{
+    [Parameter]
+    Configuration Configuration => GetInjectionValue(() => Configuration);
+
+    Target Restore => _ => _
+        .Executes(() =>
+        {
+            DotNetRestore(_ => _
+                .SetProjectFile(Solution)
+        });
+
+    Target Compile => _ => _
+        .DependsOn(Restore)
+        .Executes(() =>
+        {
+            DotNetBuild(_ => _
+                .SetProjectFile(Solution)
+                .EnableNoRestore()
+                .SetConfiguration(Configuration)
+        });
+}
+{% endhighlight %}
+
+With the `IHasSolution` interface, we are defining that our build has a `Solution` property that provides [access to our solution model](https://www.nuke.build/docs/authoring-builds/solutions-and-projects.html). The `IBuild` interface extends on that information and introduces two targets `Restore` and `Compile` that actually build the solution with a given configuration that can be passed as [parameter](https://www.nuke.build/docs/authoring-builds/parameter-declaration.html). In our build class, we only need to inherit those interfaces:
+
+{% highlight csharp linenos %}
+class Build : NukeBuild, IBuild
+{
+    public static void Main() => Execute<Build>();
+}
+{% endhighlight %}
+
+Moving forward, we could also define one more interface `IPublishNuGet` that takes care of packing and pushing NuGet packages:
+
+{% highlight csharp linenos %}
+interface IPublishNuGet : IBuild
+{
+    AbsolutePath PackageDirectory { get; }
+
+    Target Pack => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            DotNetPack(_ => _
+                .SetProject(Solution)
+                .EnableNoBuild()
+                .SetConfiguration(Configuration)
+                .SetOutputDirectory(PackageDirectory)
+                .SetVersion(GitVersion.NuGetVersionV2)
+        });
+
+    [Parameter]
+    string Source => GetInjectionValue(() => Source) ?? "https://api.nuget.org/v3/index.json";
+
+    [Parameter]
+    string ApiKey => GetInjectionValue(() => ApiKey);
+
+    Target Publish => _ => _
+        .DependsOn(Pack)
+        .Executes(() =>
+        {
+            var packages = PackageDirectory.GlobFiles("*.nupkg");
+
+            DotNetNuGetPush(_ => _
+                    .SetSource(Source)
+                    .SetApiKey(ApiKey)
+                    .CombineWith(packages, (_, v) => _
+                        .SetTargetPath(v)),
+                degreeOfParallelism: 5,
+                completeOnFailure: true);
+        });
+}
+{% endhighlight %}
+
+Again, we are extending our process on an existing interface: the `Pack` target from our new `IPublishNuGet` interface depends on the `Compile` target defined in the `IBuild` interface. Also note, how the interface now requires to actually implement a property `PackageDirectory`, which is used by the default implementation:
+
+{% highlight csharp linenos %}
+class Build : NukeBuild, IBuild, IPublishNuGet
+{
+    public static void Main() => Execute<Build>();
+
+    string PackageDirectory => RootDirectory / "output" / "packages";
+}
+{% endhighlight %}
+
+But what if we want to **extend the build pipeline in between**? For instance, to validate packages, clean our repository, or to announce a new release? With NUKE, this is rather easy using its [target definition model](https://nuke.build/docs/authoring-builds/fundamentals.html):
+
+{% highlight csharp linenos %}
+class Build : NukeBuild, IBuild, IPublishNuGet
+{
+    public static void Main() => Execute<Build>();
+    
+    Target Clean => _ => _
+        .Before<IBuild>(x => x.Restore)
+        .DependentFor<IPublishNuGet>(x => x.Publish)
+        .Executes(() => { /* */ });
+
+    Target ValidatePackages => _ => _
+        .DependsOn<IPublishNuGet>(x => x.Pack)
+        .DependentFor<IPublishNuGet>(x => x.Publish)
+        .Executes(() => { /* */ });
+
+    Target Announce => _ => _
+        .TriggeredBy<IPublishNuGet>(x => x.Publish)
+        .Executes(() => { /* */ });
+}
+{% endhighlight %}
+
+We've added a `Clean` target that will be executed as a dependency for `Publish`, but also _before_ the `Restore` target. Another target `ValidatePackages` is executed right before `Publish`, while `Announce` is triggered by `Publish` and will execute right after.
+
+## Diamond Problem
+
+So far, our design doesn't really justify the demand for interfaces yet. We could have also used a **hierarchy of base classes** along the way. > However, requires to have a strict chain of responsibilities... no way to compose. For instance, in one of our projects we might not need a target to publish NuGet packages, but a website or mobile app.
+
+However, the `Announce` target looks like a good candidate to be encapsulated as well:
+
+{% highlight csharp linenos %}
+interface IAnnounce
+{
+    Target Announce => _ => _
+        .Executes(() => { /* */ });
+
+    string Message { get; }
+}
+{% endhighlight %}
+
+Note that we've made some changes here. Firstly, we've introduced a `Message` property, which has to be implemented in our actual `Build` class again. Secondly, we've removed `IPublishNuGet` as a base interface, since `IAnnounce` shouldn't be strictly coupled to publishing NuGet packages. It could also be that we want to publish a website or something else. Hence, we can't add a dependency to the `Publish` target anymore. Luckily, we can solve this issue in our actual `Build` class:
+
+{% highlight csharp linenos %}
+class Build : NukeBuild, IBuild, IPublishNuGet, IAnnounce
+{
+    public static void Main() => Execute<Build>();
+
+    Target Announce => _ => _
+        .Inherit<IAnnounce>(x => x.Announce)
+        .TriggeredBy(Publish);
+
+    string Message => "New Release Out Now!";
+}
+{% endhighlight %}
+
+In this case, we've redefined the `Announce` target by calling `Inherit<T>` to let it derive from the default target definition in the `IAnnounce` interface. The target will keep its original actions, but will be extended with a trigger. A visualization always be generated by calling `nuke --plan`:
+
+![Build Graph](/assets/images/2020-05-24-build-sharing-default-interface-implementations/plan.png){:width="700px" .shadow}
+
+A similar trick as with default implementations and `Inherit`, we can use in a hierarchy of build classes that defines `virtual` targets:
+
+{% highlight csharp linenos %}
+class BaseBuild : NukeBuild
+{
+    public virtual Target ComplexTarget => _ => _
+        .Executes(() => { /* complex logic */ };
+}
+class Build : BaseBuild
+{
+    public static void Main() => Execute<Build>();
+
+    public override Target ComplexTarget => _ => _
+        .Base()
+        .Requires(() => AdditionalParameter)
+        .Executes(() => { /* additional logic */ };
+}
+{% endhighlight %}
+
+Here, we're actually overriding an existing target, and call `Base` to execute the original target definition. This essentially mimics a `base.<Method>` call in the realm of target definitions.
+
+## Calling Members Non-Virtual
+
+For the new fluent methods `Base` ad `Inherit`, there was one interesting issue that we had to solve. In order to let an overridden target inherit from its base declaration (or a re-implemented target with default implementation), we needed to **make non-virtual calls using reflection**. This wasn't exactly easy, since even when reflecting on a member through its declaring type, it will follow the principle of [polymorphism](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/polymorphism) and call the member virtual. With a [little bit of help from Stack Overflow](https://stackoverflow.com/a/14415506/568266), we ended up implementing the following generic method:
+
+{% highlight csharp linenos %}
+public static TResult GetValueNonVirtual<TResult>(this MemberInfo member, object obj, params object[] arguments)
+{
+    ControlFlow.Assert(member is PropertyInfo || member is MethodInfo, "member is PropertyInfo || member is MethodInfo");
+    var method = member is PropertyInfo property
+        ? property.GetMethod
+        : (MethodInfo) member;
+
+    var funcType = Expression.GetFuncType(method.GetParameters().Select(x => x.ParameterType)
+        .Concat(method.ReturnType).ToArray());
+    var functionPointer = method.NotNull("method != null").MethodHandle.GetFunctionPointer();
+    var nonVirtualDelegate = (Delegate) Activator.CreateInstance(funcType, obj, functionPointer)
+        .NotNull("nonVirtualDelegate != null");
+
+    return (TResult) nonVirtualDelegate.DynamicInvoke(arguments);
+}
+{% endhighlight %}
+
+## Conclusion
+
+The great benefit of default interfaces for is that we can compose our build from multiple predefined targets, which don't necessarily have to be share the same base class, and thus, solving the [diamond problem](https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem).
