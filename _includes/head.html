@@ -7,7 +7,7 @@
 <title>{%- if __return -%}{{ __return }} - {{ site.title }}{%- else -%}{{ site.title }}{%- endif -%}</title>
 
 {%- if _author.twitter -%}
-<meta name="twitter:card" content="summary" />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="{{ _author.twitter }}" />
 <meta name="twitter:title" content="{{ site.title }}" />
 <meta name="twitter:description" content="{%- if page.excerpt -%}{{ page.excerpt | strip_html | strip_newlines | strip | truncate: 160 }}{%- else -%}{{ site.description }}{%- endif -%}" />
