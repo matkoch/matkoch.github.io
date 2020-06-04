@@ -1,6 +1,6 @@
 ---
-title: Build Sharing with Default Interface Implementations
-key: build-sharing-default-interface-implementations
+title: Reusable Build Components with Default Interface Implementations
+key: reusable-build-components-with-default-interface-implementations
 tags:
 - Build Automation
 - NUKE
@@ -15,24 +15,24 @@ article_header:
   background_color: '#203028'
   background_image:
     gradient: 'linear-gradient(135deg, rgba(34, 0, 170 , .2), rgba(139, 34, 139, .2))'
-    src: assets/images/2020-05-24-build-sharing-default-interface-implementations/cover.jpg
+    src: assets/images/2020-05-24-reusable-build-components-with-default-interface-implementations/cover.jpg
+twitter_card: assets/images/2020-05-24-reusable-build-components-with-default-interface-implementations/thumbnail.png
 ---
 
-***TL;DR: Default implementations in interfaces are a powerful approach for build sharing. They allow to overcome the diamond problem that we traditionally have when just using a hierarchy of base classes. Through its rich target definition model, NUKE ensures that predefined build steps can easily be extended without loosing any information.***
+***TL;DR: Default implementations in interfaces are a powerful approach to extract common build infrastructure into reusable components. They allow to overcome the diamond problem that we traditionally have when just using a hierarchy of base classes. By providing a rich target definition model, NUKE ensures that predefined build steps can easily be integrated with custom build steps, or extended without losing any of the existing information.***
 
 C# 8 introduced a lot of [new language features](https://docs.microsoft.com/dotnet/csharp/whats-new/csharp-8) that can help[^1] us to make our codebase more readable, increase performance, or lower the memory footprint. However, one of these, namely [default implementations in interfaces](https://devblogs.microsoft.com/dotnet/default-implementations-in-interfaces/), seems to be more of a niche feature:
 
 [^1]: I've also written about [C# 8 language features in action](https://blog.jetbrains.com/dotnet/2019/04/24/indices-ranges-null-coalescing-assignments-look-new-language-features-c-8/) on our [JetBrains .NET Blog](https://blog.jetbrains.com/dotnet)
 
-<div class="tweet" tweetID="1248589138292604929">Every time a new version of C# comes out, I quickly find ways to adopt the newly introduced features into my code. C# 8 is an exception.
+<div class="tweet" tweetID="1248589138292604929">Every time a new version of C# comes out, I quickly find ways to adopt the newly introduced features into my code. C# 8 is an exception. Question: have you used default interface members in your code yet?</div>
 
-Question: have you used default interface members in your code yet?</div>
-
-In the context of build automation and specifically [NUKE](https://nuke.build), they have been on my radar [for some time already](https://youtu.be/SVD70QYvQ6I?t=2741). Available time made it hard, but thanks to [Thomas Unger](https://github.com/tunger) this dream has [finally come true](https://github.com/nuke-build/nuke/pull/427)! 👏
+In the context of build automation and specifically [NUKE](https://nuke.build), they have been on my radar [for some time already](https://youtu.be/SVD70QYvQ6I?t=2741).
+Available time made it hard, but thanks to [Thomas Unger](https://github.com/tunger) this dream has [finally come true](https://github.com/nuke-build/nuke/pull/427)! 👏
 
 ## Targets in Interfaces
 
-Now how exactly are default implementations relevant to build sharing? Let us consider the following example:
+Now how exactly can default implementations help to write reusable build components? Let us consider the following example:
 
 {% highlight csharp linenos %}
 interface IHasSolution
@@ -183,7 +183,7 @@ class Build : NukeBuild, IBuild, IPublishNuGet, IAnnounce
 
 Here, we're redefining the `Announce` target and calling `Inherit<T>` to let it derive from the default target definition in the `IAnnounce` interface. The target will keep its original actions, but will be extended with a trigger from `Publish`. For better understanding, we can always create a visual representation of our dependency graph using `nuke --plan`:
 
-![Build Graph](/assets/images/2020-05-24-build-sharing-default-interface-implementations/plan.png){:width="700px" .shadow}
+![Build Graph](/assets/images/2020-05-24-reusable-build-components-with-default-interface-implementations/plan.png){:width="700px" .shadow}
 
 A similar trick as with default implementations and `Inherit`, we can use in a hierarchy of build classes that defines `virtual` targets:
 
@@ -230,4 +230,4 @@ public static TResult GetValueNonVirtual<TResult>(this MemberInfo member, object
 
 ## Conclusion
 
-Default implementations in interfaces will probably not make it to every codebase out there. For the purpose of sharing build implementations though, they're the perfect fit. We're no longer coupled to use a strict hierarchy of build targets, but instead we can compose our build from multiple independent targets and connect them as needed.
+Default implementations in interfaces will probably not make it to every codebase out there. For the purpose of defining reusable build components and integrating them into specific build pipelines though, they're the perfect fit. We're no longer coupled to use a strict hierarchy of build targets, but instead we can compose our build from multiple independent targets and connect them as needed.

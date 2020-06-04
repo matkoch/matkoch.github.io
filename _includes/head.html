@@ -1,9 +1,18 @@
+{%- assign _author = site.data.authors[include.article.author] | default: site.author -%}
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
 {%- include snippets/get-article-title.html article=page -%}
 <title>{%- if __return -%}{{ __return }} - {{ site.title }}{%- else -%}{{ site.title }}{%- endif -%}</title>
+
+{%- if _author.twitter -%}
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="{{ _author.twitter }}" />
+<meta name="twitter:title" content="{{ site.title }}" />
+<meta name="twitter:description" content="{%- if page.excerpt -%}{{ page.excerpt | strip_html | strip_newlines | strip | truncate: 160 }}{%- else -%}{{ site.description }}{%- endif -%}" />
+<meta name="twitter:image" content="{{ page.article_header.background_image.src }}" />
+{%- endif -%}
 
 <meta name="description" content="{%- if page.excerpt -%}{{ page.excerpt | strip_html | strip_newlines | strip | truncate: 160 }}{%- else -%}{{ site.description }}{%- endif -%}">
 <link rel="canonical" href="{%- include snippets/page-url.html -%}">
