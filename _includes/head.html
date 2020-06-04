@@ -11,7 +11,7 @@
 <meta name="twitter:site" content="{{ _author.twitter }}" />
 <meta name="twitter:title" content="{{ site.title }}" />
 <meta name="twitter:description" content="{%- if page.excerpt -%}{{ page.excerpt | strip_html | strip_newlines | strip | truncate: 160 }}{%- else -%}{{ site.description }}{%- endif -%}" />
-<meta name="twitter:image" content="{{ page.article_header.background_image.src }}" />
+<meta name="twitter:image" content="{{ page.twitter_card | prepend: '/' | prepend: site.url }}" />
 {%- endif -%}
 
 <meta name="description" content="{%- if page.excerpt -%}{{ page.excerpt | strip_html | strip_newlines | strip | truncate: 160 }}{%- else -%}{{ site.description }}{%- endif -%}">
