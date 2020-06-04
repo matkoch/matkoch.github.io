@@ -14,9 +14,9 @@ article_header:
   theme: dark
   background_color: '#203028'
   background_image:
-    gradient: 'linear-gradient(135deg, rgba(34, 0, 170 , .2), rgba(139, 34, 139, .2))'
+    gradient: 'linear-gradient(135deg, rgba(0, 0, 100 , .5), rgba(60, 34, 60, .4))'
     src: assets/images/2020-05-24-reusable-build-components-with-default-interface-implementations/cover.jpg
-twitter_card: assets/images/2020-05-24-reusable-build-components-with-default-interface-implementations/thumbnail.png
+twitter_card: assets/images/2020-05-24-reusable-build-components-with-default-interface-implementations/thumbnail.jpeg
 ---
 
 ***TL;DR: Default implementations in interfaces are a powerful approach to extract common build infrastructure into reusable components. They allow to overcome the diamond problem that we traditionally have when just using a hierarchy of base classes. By providing a rich target definition model, NUKE ensures that predefined build steps can easily be integrated with custom build steps, or extended without losing any of the existing information.***
