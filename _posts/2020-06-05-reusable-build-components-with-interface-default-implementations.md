@@ -32,7 +32,7 @@ Available time made it hard, but thanks to [Thomas Unger](https://github.com/tun
 
 ## Writing Build Components
 
-Utilizing different [strategies for build sharing](https://www.nuke.build/docs/sharing-builds/fundamentals.html) can greatly **reduce the maintenance effort** for our build infrastructure when different projects/repositories need to be build the same way. So they can help developers working in teams, but could also be used in the OSS community. With interface default implementations, we're extending the already existing strategy of **sharing infrastructure via NuGet packages**. But how exactly will this look like? Let's dive right into writing some build components:
+Utilizing different [strategies for build sharing](https://www.nuke.build/docs/sharing-builds/fundamentals.html) can greatly **reduce the maintenance effort** for our build infrastructure when different projects/repositories are **building the same way**. So they can help developers working in teams, but could also be used in the OSS community. With interface default implementations, we're extending the already existing strategy of **using NuGet packages to share common build logic**. But how exactly will this look like? Let's dive right into writing some build components:
 
 {% highlight csharp linenos %}
 interface IHasSolution
