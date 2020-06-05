@@ -1,6 +1,6 @@
 ---
-title: Reusable Build Components with Default Interface Implementations
-key: reusable-build-components-with-default-interface-implementations
+title: Reusable Build Components with Interface Default Implementations
+key: reusable-build-components-with-interface-default-implementations
 tags:
 - Build Automation
 - NUKE
@@ -15,8 +15,8 @@ article_header:
   background_color: '#203028'
   background_image:
     gradient: 'linear-gradient(135deg, rgba(0, 0, 100 , .5), rgba(60, 34, 60, .4))'
-    src: assets/images/2020-05-24-reusable-build-components-with-default-interface-implementations/cover.jpg
-twitter_card: assets/images/2020-05-24-reusable-build-components-with-default-interface-implementations/thumbnail.jpeg
+    src: assets/images/2020-06-05-reusable-build-components-with-interface-default-implementations/cover.jpg
+twitter_card: assets/images/2020-06-05-reusable-build-components-with-interface-default-implementations/thumbnail.jpeg
 ---
 
 ***TL;DR: Default implementations in interfaces are a powerful approach to extract common build infrastructure into reusable components. They allow to overcome the diamond problem that we traditionally have when just using a hierarchy of base classes. By providing a rich target definition model, NUKE ensures that predefined build steps can easily be integrated with custom build steps, or extended without losing any of the existing information.***
@@ -183,7 +183,7 @@ class Build : NukeBuild, IBuild, IPublishNuGet, IAnnounce
 
 Here, we're redefining the `Announce` target and calling `Inherit<T>` to let it derive from the default target definition in the `IAnnounce` interface. The target will keep its original actions, but will be extended with a trigger from `Publish`. For better understanding, we can always create a visual representation of our dependency graph using `nuke --plan`:
 
-![Build Graph](/assets/images/2020-05-24-reusable-build-components-with-default-interface-implementations/plan.png){:width="700px" .shadow}
+![Build Graph](/assets/images/2020-06-05-reusable-build-components-with-interface-default-implementations/plan.png){:width="700px" .shadow}
 
 A similar trick as with default implementations and `Inherit`, we can use in a hierarchy of build classes that defines `virtual` targets:
 

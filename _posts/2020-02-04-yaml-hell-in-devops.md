@@ -1,11 +1,11 @@
 ---
-title: Overcoming YAML Pain in CI/CD
-key: yaml-hell-in-devops
+title: Overcoming YAML Hell in Build Pipelines
+key: overcoming-yaml-hell-in-build-pipelines
 tags:
 - .NET
 - AppVeyor
 - Azure Pipelines
-- Continuous Integration
+- Build Pipelines
 - DevOps
 - GitHub Actions
 - Kotlin
@@ -20,8 +20,8 @@ article_header:
   background_color: '#203028'
   background_image:
     gradient: 'linear-gradient(135deg, rgba(34, 0, 170 , .2), rgba(139, 34, 139, .2))'
-    src: assets/images/2020-02-04-yaml-hell-in-devops/cover.jpg
-twitter_card: assets/images/2020-02-04-yaml-hell-in-devops/thumbnail.jpeg
+    src: assets/images/2020-02-04-overcoming-yaml-hell-in-build-pipelines.jpg
+twitter_card: assets/images/2020-02-04-overcoming-yaml-hell-in-build-pipelines/thumbnail.jpeg
 ---
 
 <script>
@@ -101,11 +101,11 @@ Hilarious. Calling it _modern_ almost sounds like a second attempt to make it ac
 
 In fact, [TeamCity](https://www.jetbrains.com/teamcity) implements this approach [since 2016](https://blog.jetbrains.com/teamcity/2016/11/kotlin-configuration-scripts-an-introduction/) already. We can use the [Kotlin DSL](https://www.jetbrains.com/help/teamcity/kotlin-dsl.html) to implement our complete build pipeline, which is then internally converted by TeamCity to its own runner format, which is XML. I’m absolutely not a Java or Kotlin developer, but writing Kotlin scripts is actually pretty decent and discoverable when using [IntelliJ IDEA](https://www.jetbrains.com/idea/). We get all the IDE features like syntax highlighting, code completion, navigation, and refactorings:
 
-![Writing Kotlin in IntelliJ IDEA](/assets/images/2020-02-04-yaml-hell-in-devops/writing-kotlin.gif){:width="600px" .shadow}
+![Writing Kotlin in IntelliJ IDEA](/assets/images/2020-02-04-overcoming-yaml-hell-in-build-pipelines/writing-kotlin.gif){:width="600px" .shadow}
 
 In my opinion, this is much better than YAML. We don’t have to commit our configuration just to realize that we missed an indentation, or mistyped a reference. Our IDE will just tell us right away, if something is semantically broken or we're good. As a bonus, whenever we feel lost in the Kotlin DSL, we can fallback to using the UI wizards and let TeamCity show us the particular configuration as Kotlin code:
 
-![Viewing DSL from UI wizard](/assets/images/2020-02-04-yaml-hell-in-devops/view-dsl.png){:width="450px" .shadow}
+![Viewing DSL from UI wizard](/assets/images/2020-02-04-overcoming-yaml-hell-in-build-pipelines/view-dsl.png){:width="450px" .shadow}
 
 ## Getting into Build Systems
 
@@ -222,9 +222,9 @@ Here are a few illustrations how things will look like in TeamCity. Including th
 
 <div class="swiper swiper-demo swiper-demo--image">
   <div class="swiper__wrapper">
-    <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-02-04-yaml-hell-in-devops/teamcity-build-chains.png"/></div>
-    <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-02-04-yaml-hell-in-devops/teamcity-artifacts.png"/></div>
-    <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-02-04-yaml-hell-in-devops/teamcity-parameters.png"/></div>
+    <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-02-04-overcoming-yaml-hell-in-build-pipelines/teamcity-build-chains.png"/></div>
+    <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-02-04-overcoming-yaml-hell-in-build-pipelines/teamcity-artifacts.png"/></div>
+    <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-02-04-overcoming-yaml-hell-in-build-pipelines/teamcity-parameters.png"/></div>
   </div>
   <div class="swiper__button swiper__button--prev fas fa-chevron-left"></div>
   <div class="swiper__button swiper__button--next fas fa-chevron-right"></div>
