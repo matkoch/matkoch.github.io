@@ -27,12 +27,12 @@ C# 8 introduced a lot of [new language features](https://docs.microsoft.com/dotn
 
 <div class="tweet" tweetID="1248589138292604929">Every time a new version of C# comes out, I quickly find ways to adopt the newly introduced features into my code. C# 8 is an exception. Question: have you used default interface members in your code yet?</div>
 
-In the context of build automation and specifically [NUKE](https://nuke.build), they have been on my radar [for some time already](https://youtu.be/SVD70QYvQ6I?t=2741).
+In the context of build automation and specifically [NUKE](https://nuke.build), they have been [on my radar](https://youtu.be/SVD70QYvQ6I?t=2741) for some time already. After all, they 
 Available time made it hard, but thanks to [Thomas Unger](https://github.com/tunger) this dream has [finally come true](https://github.com/nuke-build/nuke/pull/427)! 👏
 
-## Targets in Interfaces
+## Writing Build Components
 
-Now how exactly can default implementations help to write reusable build components? Let us consider the following example:
+Utilizing different [strategies for build sharing](http://www.nuke.build/docs/sharing-builds/fundamentals.html) can greatly **reduce the maintenance effort** for our build infrastructure when different projects/repositories need to be build the same way. So they can help developers working in teams, but could also be used in the OSS community. With interface default implementations, we're extending the already existing strategy of **sharing infrastructure via NuGet packages**. But how exactly will this look like? Let's dive right into writing some build components:
 
 {% highlight csharp linenos %}
 interface IHasSolution
