@@ -154,7 +154,7 @@ We've added a `Clean` target that will be executed as a dependency for `Publish`
 
 ## Provoking Diamond Problems
 
-So far, our build implementation doesn't really justify the demand for interfaces yet. We could have also used a **hierarchy of base classes** along the way. However, for our next step, we'll actually need the flexibility of [multiple inheritance](https://en.wikipedia.org/wiki/Multiple_inheritance). Suppose we want to extract the `Announce` target in its own interface and also make it more general purpose, so that it can be used when publishing a website or a mobile application. Think of it as following the [single-responsibility principle](https://en.wikipedia.org/wiki/Single-responsibility_principle) with build components. Let's introduce the `IAnnounce` interface:
+So far, our build implementation doesn't really justify the demand for interfaces yet. We could have also used a **hierarchy of base classes** along the way. However, for our next step, we'll actually need the flexibility of [multiple inheritance](https://en.wikipedia.org/wiki/Multiple_inheritance). Suppose we want to extract the `Announce` target in its own interface and also make it more general purpose, so that it can be used when publishing a website or a mobile application. Think of it as the **[single-responsibility principle](https://en.wikipedia.org/wiki/Single-responsibility_principle) for build components**. Let's introduce the `IAnnounce` interface:
 
 {% highlight csharp linenos %}
 interface IAnnounce
