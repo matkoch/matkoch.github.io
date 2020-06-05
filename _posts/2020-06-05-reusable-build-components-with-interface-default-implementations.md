@@ -154,7 +154,7 @@ We've added a `Clean` target that will be executed as a dependency for `Publish`
 
 ## Provoking Diamond Problems
 
-So far, our build implementation doesn't really justify the demand for interfaces yet. We could have also used a **hierarchy of base classes** along the way. However, for our next step, we'll actually need the flexibility of [multiple inheritance](https://en.wikipedia.org/wiki/Multiple_inheritance). Suppose we want to extract the `Announce` target in its own interface and also make it more general purpose, so that it can be used when publishing a website or a mobile application. Let's introduce the `IAnnounce` interface:
+So far, our build implementation doesn't really justify the demand for interfaces yet. We could have also used a **hierarchy of base classes** along the way. However, for our next step, we'll actually need the flexibility of [multiple inheritance](https://en.wikipedia.org/wiki/Multiple_inheritance). Suppose we want to extract the `Announce` target in its own interface and also make it more general purpose, so that it can be used when publishing a website or a mobile application. Think of it as following the [single-responsibility principle](https://en.wikipedia.org/wiki/Single-responsibility_principle) with build components. Let's introduce the `IAnnounce` interface:
 
 {% highlight csharp linenos %}
 interface IAnnounce
@@ -231,4 +231,4 @@ public static TResult GetValueNonVirtual<TResult>(this MemberInfo member, object
 
 ## Conclusion
 
-Default implementations in interfaces will probably not make it to every codebase out there. For the purpose of defining reusable build components and integrating them into specific build pipelines though, they're the perfect fit. We're no longer coupled to use a strict hierarchy of build targets, but instead we can compose our build from multiple independent targets and connect them as needed.
+Default implementations in interfaces will probably not make it to every codebase out there. For the purpose of defining reusable build components and integrating them into specific build pipelines though, they're the perfect fit. We're no longer coupled to use a strict hierarchy of build targets, but instead we can compose our build from multiple independent targets and connect them as needed. Most importantly, we reduce the maintenance cost when different projects need to be built the same way.
