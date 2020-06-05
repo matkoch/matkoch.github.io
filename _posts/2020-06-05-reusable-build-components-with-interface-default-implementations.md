@@ -206,6 +206,7 @@ class Build : BaseBuild
 
 Here, we're actually overriding an existing target, and call `Base` to execute the original target definition. This essentially mimics a `base.<Method>` call in the realm of target definitions.
 
+<!--
 ## Calling Members Non-Virtual
 
 For the new fluent methods `Base` ad `Inherit`, there was one interesting issue that we had to solve. In order to let an overridden target inherit from its base declaration (or a re-implemented target with default implementation), we needed to **make non-virtual calls using reflection**. This wasn't exactly easy, since even when reflecting on a member through its declaring type, it will follow the principle of [polymorphism](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/polymorphism) and call the member virtual. With a [little bit of help from Stack Overflow](https://stackoverflow.com/a/14415506/568266), we ended up implementing the following generic method:
@@ -226,7 +227,7 @@ public static TResult GetValueNonVirtual<TResult>(this MemberInfo member, object
 
     return (TResult) nonVirtualDelegate.DynamicInvoke(arguments);
 }
-{% endhighlight %}
+{% endhighlight %}-->
 
 ## Conclusion
 
