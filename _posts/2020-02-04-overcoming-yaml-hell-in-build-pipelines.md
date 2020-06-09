@@ -132,8 +132,8 @@ Meaning that we use both, a CI configuration and a build system, whereas the **C
 {% highlight csharp linenos %}
 [GitHubActions(
     "continuous",
-    GitHubActionsImage.MacOsLatest,
     GitHubActionsImage.UbuntuLatest,
+    GitHubActionsImage.MacOsLatest,
     On = new[] { GitHubActionsTrigger.Push },
     InvokedTargets = new[] { nameof(Test), nameof(Pack) },
     ImportSecrets = new[] { nameof(SlackWebhook), nameof(GitterAuthToken) })]
@@ -168,9 +168,9 @@ jobs:
         env:
             SlackWebhook: ${{ secrets.SlackWebhook }}
             GitterAuthToken: ${{ secrets.GitterAuthToken }}
-  windows-latest:
-    name: windows-latest
-    runs-on: windows-latest
+  macOS-latest:
+    name: macOS-latest
+    runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v1
       - name: Run './build.cmd Test Pack'
