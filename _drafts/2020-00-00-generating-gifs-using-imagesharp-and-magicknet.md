@@ -1,0 +1,2 @@
+- https://github.com/SixLabors/ImageSharp
+- https://github.com/dlemstra/Magick.NET
