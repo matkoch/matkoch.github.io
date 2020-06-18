@@ -90,8 +90,13 @@ While I see how YAML configuration can be attractive, I truly believe that for C
 - **It's error-prone.** We might indent too much or too little, mistype a well-known property, or forget to escape properly without even knowing. YAML is almost always valid, and there is no proper syntax highlighting. There are schema files that enable rudimentary code completion, but as a C# developer, this still feels clunky.
 - **It's not refactoring-safe.** This is a matter of tooling again. Whenever we're dealing with IDs and their references, the best choice you have is _Search & Replace_. This should only be the last resort.
 - **It's declarative. Not imperative.** Not everyone needs that, but usually, there's a time when you want to iterate over a collection, filter items, write some more complex conditions, and other funky stuff. YAML is just the wrong format for that.
+- **It causes vendor lock-ins.** Each CI system has its very own format. Switching to a different CI system becomes non-trivial, as we have to rewrite the complete configuration.
 
-And one more important fact besides: each CI system has its very own format. Switching between different CI systems becomes non-trivial, as we have to rewrite the complete configuration.
+One more important fact is that many YAML configurations define **inline Bash or PowerShell scripts**. Typically, those make it hard to use any kind of IDE tooling. However, in JetBrains IDEs we can use [language injections](https://www.jetbrains.com/help/idea/using-language-injections.html) to partially solve this:
+
+<div class="tweet" tweetID="1273324833842122753">So I've recently been working on some @GitHub Actions with steps written in shell. The bad thing is that I was doing that in YAML, so the syntax highlighting... oh, wait a sec... Smiling face with sunglasses @intellijidea #github #intellij</div>
+
+Seems like JetBrains has at least partially fixed YAML! 🤓
 
 ## Modern Configuration as Code
 
