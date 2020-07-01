@@ -164,12 +164,12 @@ Remember that this requires at least some .NET Core SDK to be installed. Also ke
 
 ## Single-Entry Scripts
 
-So far, the experience was looking quite good already. But one thing that always bothered me, was that `build.sh` and `build.ps1` are exclusive to UNIX and Windows systems. Can't we have a single-entry script that can be invoked cross-platform? That would solve the following issues:
+So far, the experience was looking quite good already. But one thing that always bothered me, was that `build.sh` and `build.ps1` were exclusive to UNIX and Windows systems. Can't we have a single-entry script that can be invoked cross-platform? That would solve the following issues:
 
 - **Documentation** – [Duplicated invocation snippets](https://github.com/dotnet/maui/blob/85ee7fe836dc005d44eb0ba6b4660b1c6341d59c/build.cake#L9-L15) for both `build.sh` and `build.ps1` are a waste of time while reading, annoying when writing documentation, and also more prone to becoming outdated.
 - **Multi-platform pipelines** – Many build servers enable us to write [multi-platform pipelines](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started-multiplatform) where a set of common build steps is executed for different operating systems using a matrix approach. This works great with pre-defined tasks, but it falls short when we need to [call different scripts](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started-multiplatform).
 
-At first, it sounds like [PowerShell Core](https://github.com/PowerShell/PowerShell) is a good direction to go, but unfortunately, [executing `dotnet-install.ps1` is not supported on UNIX](https://github.com/dotnet/install-scripts/issues/23). Based on a [Stack Overflow question](https://stackoverflow.com/questions/17510688/single-script-to-run-in-both-windows-batch-and-linux-bash), I've found that the `:` colon character can be used to effectively skip code in Batch scripts, while POSIX shells simply evaluate them to `true`:
+Based on a [Stack Overflow question](https://stackoverflow.com/questions/17510688/single-script-to-run-in-both-windows-batch-and-linux-bash), I've found that the `:` colon character can be used to effectively skip code in Batch scripts, while POSIX shells simply evaluate them to `true`:
  
 {% highlight batch linenos %}
 :; set -eo pipefail
