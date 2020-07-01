@@ -20,9 +20,9 @@ article_header:
 
 ***TL;DR: PowerShell and Bash scripts are indispensable for developers. While benefiting from being transparent compared to executables, they're not exactly easy to read by users nor easy to write by maintainers, and also suffer from duplication for different operating systems. With the .NET Core SDK, this issue is mostly solved using .NET Global Tools. Nevertheless, global tools come at the cost of requiring the SDK to be pre-installed. Several workarounds for local and build server environments exist, however, shell scripts are really the only solid solution. Single-entry scripts can help to erase the last relics from PowerShell and Bash scripts for documentation and end-users.***
 
-When I started with [NUKE](https://nuke.build), part of the hardest work was to provide a convenient setup experience. NUKE was one of the first build systems to use conventional [console applications](https://docs.microsoft.com/en-us/dotnet/core/tutorials/with-visual-studio-code) in order to support first-class development experience, including navigation, debugging, and refactorings. [BullsEye](https://github.com/adamralph/bullseye) and [FlubuCore](https://github.com/dotnetcore/FlubuCore) followed shortly after. Noteworthy, they come in a more simple form where the build project is isolated from the main solution by default. In contrast (but not as requirement), NUKE allows us to **add the build project to the solution** besides other projects to make it more accessible. This approach works really great, but it does require some **tedious tweaks that are good to automate**.
+When I started with [NUKE](https://nuke.build), part of the hardest work was to provide a convenient setup experience. NUKE was one of the first build systems to use conventional [console applications](https://docs.microsoft.com/en-us/dotnet/core/tutorials/with-visual-studio-code) in order to support first-class development experience. [BullsEye](https://github.com/adamralph/bullseye) and [FlubuCore](https://github.com/dotnetcore/FlubuCore) followed shortly after. Noteworthy, they come in a more simple form where the build project is isolated from the main solution by default. In contrast but not necessarily, NUKE allows us to **add the build project to the solution** besides other projects to make it more accessible. This approach works really great, but it does require some **tedious tweaks that are good to automate**. Another natural consequence of using build projects, is that they **require a .NET Core SDK installation** to build and run, which is crucial for build servers and new project contributors.
 
-In the next sections, we'll look at how the setup experience evolved from complex PowerShell and Bash scripts to using .NET Global Tools, and how everything became more cross-platform and self-contained.
+In the next sections, we'll look at how the setup experience in NUKE evolved from complex PowerShell and Bash scripts to using .NET Global Tools, and how the .NET Core bootstrapping via shell scripts makes everything more cross-platform and self-contained.
 
 ## Hacking Shell Scripts
 
@@ -63,7 +63,7 @@ Using the [Bash support](https://plugins.jetbrains.com/plugin/4230-bashsupport) 
 
 Even though the plugins helped a lot, honestly, I can't say that I really enjoyed maintaining the setup scripts. I've **never felt familiar with the code** after coming back, and there were plenty of stupid and surprising issues, like [missing parentheses](https://github.com/nuke-build/nuke/pull/28) or [crashes if IE wasn't started once before](https://github.com/nuke-build/nuke/issues/11).
 
-## Unification with Global Tools
+## Setup with Global Tools
 
 With `netcoreapp2.1` the .NET Core SDK introduced [.NET Global Tools](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools) and since NUKE meanwhile established a reasonable community, I've decided that it's okay [moving towards a unified executable](https://github.com/nuke-build/nuke/issues/26):
 
@@ -78,9 +78,9 @@ nuke :setup
 
 That day the [shell scripts have been replaced by a global tool](https://github.com/nuke-build/nuke/commit/2481d251d9d4a7b090632a879a0c93221c146ee0), I could delete 400 LOC that were basically duplicated and hard to maintain, and replace them with roughly 300 lines of clean C# code.
 
-## Installation of .NET Core SDK
+## Bootstrapping .NET Core SDK
 
-Another difference compared to BullsEye and FlubuCore, is that NUKE provides bootstrapping scripts that will install the .NET Core SDK. As an example, here is the `build.sh` script:
+Another difference compared to BullsEye and FlubuCore, is that NUKE provides bootstrapping scripts that will install the .NET Core SDK without any further requirements. As an example, here is the `build.sh` script:
 
 {% highlight bash linenos %}
 #!/usr/bin/env bash
@@ -147,7 +147,7 @@ echo "Microsoft (R) .NET Core SDK version $("$DOTNET_EXE" --version)"
 "$DOTNET_EXE" run --project "$BUILD_PROJECT_FILE" --no-build -- "$@"
 {% endhighlight %}
 
-The bootstrapping scripts are very important to run on build servers, since the required .NET Core SDK might not be installed. Now, many will say that there is the [_Use .NET Core_ task](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/tool/dotnet-core-tool-installer?view=azure-devops) that will perform an [install according to the `global.json`](https://docs.microsoft.com/en-us/dotnet/core/tools/global-json?tabs=netcore3x#globaljson-schema) file, but this approach has several disadvantages. Firstly, a similar task **might not exist on the particular build server** you're using. Also, predefined tasks tend to be **very inflexible** and eventually force us to use [hacky workarounds](https://github.com/actions/setup-dotnet/issues/25#issuecomment-646925506) or reconsider going back to shell scripts:
+The bootstrapping scripts are very important to run on build servers, since the required .NET Core SDK might not be installed. Now, many will say that there is the [_Use .NET Core_ task](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/tool/dotnet-core-tool-installer?view=azure-devops) that will perform an [install according to the `global.json`](https://docs.microsoft.com/en-us/dotnet/core/tools/global-json?tabs=netcore3x#globaljson-schema) file, but this approach has several disadvantages. Firstly, a similar task **might not exist on the particular build server** we're using. Also, predefined tasks tend to be **very inflexible** and eventually force us to use [hacky workarounds](https://github.com/actions/setup-dotnet/issues/25#issuecomment-646925506) or reconsider going back to shell scripts:
 
 <div class="tweet" tweetID="1274641221693169664">I cannot believe that it is not officially supported by Github actions to have multiple versions of the .NET Core SDK installed.</div>
 
@@ -155,7 +155,7 @@ Even more importantly, with the rapid evolution of C# as a language, chances are
 
 <div class="tweet" tweetID="1169028787427827712">Blogged: Managing your .NET Core SDK versions with the .NET Install SDK Global Tool</div>
 
-Remember that this requires at least some .NET Core SDK to be installed. Also keep in mind that this is a manual step and the tool needs to be installed on your colleagues or contributors machine.
+Remember that this requires at least some .NET Core SDK to be installed. Also keep in mind that this is a manual step and the tool needs to be installed on our colleagues or contributors machine.
 
 <!--
 - https://github.com/cake-build/cake/blob/0eaee7e2a7d95611b1de58b40493f550ced31c78/build.ps1
