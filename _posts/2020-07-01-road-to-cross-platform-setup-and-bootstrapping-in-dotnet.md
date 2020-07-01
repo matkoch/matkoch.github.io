@@ -61,7 +61,7 @@ Using the [Bash support](https://plugins.jetbrains.com/plugin/4230-bashsupport) 
 
 ![PowerShell Support in JetBrains Rider](/assets/images/2020-07-01-road-to-cross-platform-setup-and-bootstrapping-in-dotnet/language-support.gif){:width="700px" .shadow}
 
-Even though the plugins helped a lot, honestly, I can't say that I really enjoyed maintaining the setup scripts. I've **never felt familiar with the code** after coming back, and there were plenty of stupid and surprising issues, like [missing parentheses](https://github.com/nuke-build/nuke/pull/28) or [crashes if IE wasn't started once](https://github.com/nuke-build/nuke/issues/11).
+Even though the plugins helped a lot, honestly, I can't say that I really enjoyed maintaining the setup scripts. I've **never felt familiar with the code** after coming back, and there were plenty of stupid and surprising issues, like [missing parentheses](https://github.com/nuke-build/nuke/pull/28) or [crashes if IE wasn't started once before](https://github.com/nuke-build/nuke/issues/11).
 
 ## Unification with Global Tools
 
@@ -151,7 +151,7 @@ The bootstrapping scripts are very important to run on build servers, since the 
 
 <div class="tweet" tweetID="1274641221693169664">I cannot believe that it is not officially supported by Github actions to have multiple versions of the .NET Core SDK installed.</div>
 
-Even more importantly, with the rapid evolution of C# as a language, chances are good that we might not have the required SDK installed for a repository we've just forked. Joseph Woodward came up with the [InstallSdkGlobalTool](https://www.nuget.org/packages/installsdkglobaltool) to partially solve that for local machines at least. So in a repository with `global.json` file, we can just invoke `dotnet-install-sdk` and it will do its magic:
+Even more importantly, with the rapid evolution of C# as a language, chances are good that we might not have the required SDK installed for a repository we've just forked. [Joseph Woodward](https://twitter.com/joe_mighty) came up with the [InstallSdkGlobalTool](https://www.nuget.org/packages/installsdkglobaltool) to partially solve that for local machines at least. So in a repository with `global.json` file, we can just invoke `dotnet-install-sdk` and it will do its magic:
 
 <div class="tweet" tweetID="1169028787427827712">Blogged: Managing your .NET Core SDK versions with the .NET Install SDK Global Tool</div>
 
@@ -164,38 +164,24 @@ Remember that this requires at least some .NET Core SDK to be installed. Also ke
 
 ## Single-Entry Scripts
 
-So far, the experience was looking quite good already. But one thing that always bothered me, was that `build.sh` and `build.ps1` are exclusive to UNIX and Windows systems. What if we had a [single-entry script that can be used on all platforms](https://stackoverflow.com/questions/17510688/single-script-to-run-in-both-windows-batch-and-linux-bash)? That would solve the following issues:
+So far, the experience was looking quite good already. But one thing that always bothered me, was that `build.sh` and `build.ps1` are exclusive to UNIX and Windows systems. Can't we have a single-entry script that can be invoked cross-platform? That would solve the following issues:
 
 - **Documentation** – [Duplicated invocation snippets](https://github.com/dotnet/maui/blob/85ee7fe836dc005d44eb0ba6b4660b1c6341d59c/build.cake#L9-L15) for both `build.sh` and `build.ps1` are a waste of time while reading, annoying when writing documentation, and also more prone to becoming outdated.
 - **Multi-platform pipelines** – Many build servers enable us to write [multi-platform pipelines](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started-multiplatform) where a set of common build steps is executed for different operating systems using a matrix approach. This works great with pre-defined tasks, but it falls short when we need to [call different scripts](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started-multiplatform).
 
-_I've actually also considered [PowerShell Core](https://github.com/PowerShell/PowerShell) for cross-platform execution, but there is an unresolved issue that [`dotnet-install.ps1` is not supported on UNIX](https://github.com/dotnet/install-scripts/issues/23). As already discussed, being able to execute the install script is an essential requirement._
-
-Using single-entry scripts is very convenient, especially for smaller snippets. For instance, I recently [updated the JetBrains/resharper-rider-plugin](https://github.com/JetBrains/resharper-rider-plugin/commit/5129e4e862c7aa2e70b811d65cdf1913e3fb3759) repository to use this approach to install, pack, and unpack a [custom `dotnet new` template](https://docs.microsoft.com/en-us/dotnet/core/tools/custom-templates) for development purpose. As an example, here is the resulting `install.cmd` script:
-
+At first, it sounds like [PowerShell Core](https://github.com/PowerShell/PowerShell) is a good direction to go, but unfortunately, [executing `dotnet-install.ps1` is not supported on UNIX](https://github.com/dotnet/install-scripts/issues/23). Based on a [Stack Overflow question](https://stackoverflow.com/questions/17510688/single-script-to-run-in-both-windows-batch-and-linux-bash), I've found that the `:` colon character can be used to effectively skip code in Batch scripts, while POSIX shells simply evaluate them to `true`:
+ 
 {% highlight batch linenos %}
 :; set -eo pipefail
 :; SCRIPT_DIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
-:; dotnet new --uninstall ${SCRIPT_DIR}/content
-:; dotnet new --install ${SCRIPT_DIR}/content
-:; exit $?
-
-dotnet new --uninstall %~dp0content
-dotnet new --install %~dp0content
-{% endhighlight %}
-
-It's probably obvious, that for larger and more complex scripts, this approach doesn't scale very well. **Most of the IDE tooling will be gone** apart maybe from [hippie completion](https://www.jetbrains.com/help/idea/auto-completing-code.html#hippie_completion). A good compromise is to immediately delegate to a proper Bash or PowerShell script:
-
-{% highlight batch linenos %}
-:; set -eo pipefail
-:; ./build.sh "$@"
+:; ${SCRIPT_DIR}/build.sh "$@"
 :; exit $?
 
 @ECHO OFF
 powershell -ExecutionPolicy ByPass -NoProfile %0\..\build.ps1 %*
 {% endhighlight %}
 
-The above is currently the way used for NUKE's bootstrapping: When executing the [build.cmd](https://github.com/nuke-build/nuke/blob/develop/source/Nuke.GlobalTool/templates/build.cmd) script, the interpreter will invoke either [build.sh](https://github.com/nuke-build/nuke/blob/develop/source/Nuke.GlobalTool/templates/build.sh) or [build.ps1](https://github.com/nuke-build/nuke/blob/develop/source/Nuke.GlobalTool/templates/build.ps1). And as a user, we just call `build.cmd` no matter what workstation we're working on.
+Depending on our current operating system, calling `build.cmd` will either delegate to `build.sh` or `build.ps1`. It's probably obvious, that for larger and more complex scripts, this approach doesn't scale very well. **Most of the IDE tooling won't work** apart from very simple [hippie completion](https://www.jetbrains.com/help/idea/auto-completing-code.html#hippie_completion).
 
 After some time [Georg Dangl](https://twitter.com/georgdangl) discovered an issue that the [generated scripts are not executable by default](https://blog.dangl.me/archive/executing-nuke-build-scripts-on-linux-machines-with-correct-file-permissions/). When invoking the scripts, the error message `permission denied: ./build.cmd` was returned. Meanwhile, this has been addressed so that the setup in NUKE now executes the following commands:
 
