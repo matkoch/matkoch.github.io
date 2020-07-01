@@ -1,5 +1,5 @@
 ---
-title: Road to Cross-Platform Setup & Bootstrapping in .NET
+title: The Road to Cross-Platform Setup & Bootstrapping in .NET
 tags:
 - .NET
 - Bash
