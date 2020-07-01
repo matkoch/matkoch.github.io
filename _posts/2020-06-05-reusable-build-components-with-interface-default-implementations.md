@@ -185,7 +185,7 @@ Here, we're redefining the `Announce` target and calling `Inherit<T>` to let it 
 
 ![Build Graph](/assets/images/2020-06-05-reusable-build-components-with-interface-default-implementations/plan.png){:width="700px" .shadow}
 
-A similar trick as with default implementations and `Inherit`, we can use in a hierarchy of build classes that defines `virtual` targets:
+A similar trick as with default implementations and `Inherit`, we can use in a **hierarchy of build classes** that defines `virtual` targets:
 
 {% highlight csharp linenos %}
 class BaseBuild : NukeBuild
@@ -193,6 +193,7 @@ class BaseBuild : NukeBuild
     public virtual Target ComplexTarget => _ => _
         .Executes(() => { /* complex logic */ };
 }
+
 class Build : BaseBuild
 {
     public static void Main() => Execute<Build>();
@@ -231,4 +232,6 @@ public static TResult GetValueNonVirtual<TResult>(this MemberInfo member, object
 
 ## Conclusion
 
-Default implementations in interfaces will probably not make it to every codebase out there. For the purpose of defining reusable build components and integrating them into specific build pipelines though, they're the perfect fit. We're no longer coupled to use a strict hierarchy of build targets, but instead we can compose our build from multiple independent targets and connect them as needed. Most importantly, we reduce the maintenance cost when different projects need to be built the same way.
+Default implementations in interfaces will probably not make it to every codebase out there. For the purpose of defining reusable build components and integrating them into specific build pipelines though, they're the perfect fit. We're no longer coupled to use a strict hierarchy of build targets, but instead we can **compose our build from multiple independent targets and connect them as needed**. Most importantly, we reduce the maintenance cost when different projects need to be built the same way. With NUKE, we [will continue to add more build components](https://github.com/nuke-build/nuke/tree/develop/source/Nuke.Components) following this approach.
+
+**Build smart, build with [NUKE](https://nuke.build)!**
