@@ -234,4 +234,4 @@ public static TResult GetValueNonVirtual<TResult>(this MemberInfo member, object
 
 Default implementations in interfaces will probably not make it to every codebase out there. For the purpose of defining reusable build components and integrating them into specific build pipelines though, they're the perfect fit. We're no longer coupled to use a strict hierarchy of build targets, but instead we can **compose our build from multiple independent targets and connect them as needed**. Most importantly, we reduce the maintenance cost when different projects need to be built the same way. With NUKE, we [will continue to add more build components](https://github.com/nuke-build/nuke/tree/develop/source/Nuke.Components) following this approach.
 
-**Build smart, build with [NUKE](https://nuke.build)!**
+**Compose your builds, build with [NUKE](https://nuke.build)!**
