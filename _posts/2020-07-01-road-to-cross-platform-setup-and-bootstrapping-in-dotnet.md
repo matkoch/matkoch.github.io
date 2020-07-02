@@ -194,4 +194,4 @@ After some time [Georg Dangl](https://twitter.com/georgdangl) discovered an issu
 
 With .NET Core running cross-platform, it is important to ensure shell scripts to work cross-platform as well. Setup routines are perfectly qualified to be moved into global tools, whereas bootstrapping tasks, like bootstrapping the .NET Core SDK, should remain in PowerShell and Bash scripts to improve the experience for build servers and first-time contributors.
 
- **Build your projects frictionless with [NUKE](https://nuke.build)!**
+ **Bootstrap your builds frictionless with [NUKE](https://nuke.build)!**
