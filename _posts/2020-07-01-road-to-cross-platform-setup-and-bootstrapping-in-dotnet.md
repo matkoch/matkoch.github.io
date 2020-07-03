@@ -148,7 +148,11 @@ echo "Microsoft (R) .NET Core SDK version $("$DOTNET_EXE" --version)"
 "$DOTNET_EXE" run --project "$BUILD_PROJECT_FILE" --no-build -- "$@"
 {% endhighlight %}
 
-The bootstrapping scripts are very important to run on build servers, since the required .NET Core SDK might not be installed. Now, many will say that there is the [_Use .NET Core_ task](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/tool/dotnet-core-tool-installer?view=azure-devops) that will perform an [install according to the `global.json`](https://docs.microsoft.com/en-us/dotnet/core/tools/global-json?tabs=netcore3x#globaljson-schema) file, but this approach has several disadvantages. Firstly, a similar task **might not exist on the particular build server** we're using. Also, predefined tasks tend to be **very inflexible** and eventually force us to use [hacky workarounds](https://github.com/actions/setup-dotnet/issues/25#issuecomment-646925506) or reconsider going back to shell scripts:
+The bootstrapping scripts are very important to run on build servers, since the required .NET Core SDK might not be installed:
+
+<div class="tweet" tweetID="1219927279977017344">What about build servers? They are always behind, so in most of my OSS projects I need to ensure I download the right SDK.</div>
+
+Now, many will say that there is the [_Use .NET Core_ task](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/tool/dotnet-core-tool-installer?view=azure-devops) that will perform an [install according to the `global.json`](https://docs.microsoft.com/en-us/dotnet/core/tools/global-json?tabs=netcore3x#globaljson-schema) file, but this approach has several disadvantages. Firstly, a similar task **might not exist on the particular build server** we're using. Also, predefined tasks tend to be **very inflexible** and eventually force us to use [hacky workarounds](https://github.com/actions/setup-dotnet/issues/25#issuecomment-646925506) or reconsider going back to shell scripts:
 
 <div class="tweet" tweetID="1274641221693169664">I cannot believe that it is not officially supported by Github actions to have multiple versions of the .NET Core SDK installed.</div>
 
