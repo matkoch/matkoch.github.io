@@ -2,14 +2,13 @@
 title: Overcoming YAML Hell in Build Pipelines
 key: overcoming-yaml-hell-in-build-pipelines
 tags:
+- Build Pipelines
+- NUKE
 - .NET
 - AppVeyor
 - Azure Pipelines
-- Build Pipelines
-- DevOps
 - GitHub Actions
 - Kotlin
-- NUKE
 - TeamCity
 mode: immersive
 header:

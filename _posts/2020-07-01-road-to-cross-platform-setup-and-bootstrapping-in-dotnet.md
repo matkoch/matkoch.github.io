@@ -1,11 +1,13 @@
 ---
 title: The Road to Cross-Platform Setup & Bootstrapping in .NET
 tags:
+- Build Pipelines
 - .NET
+- NUKE
 - Bash
-- JetBrains Rider
 - PowerShell
 - Windows Batch
+- JetBrains Rider
 mode: immersive
 header:
   theme: dark

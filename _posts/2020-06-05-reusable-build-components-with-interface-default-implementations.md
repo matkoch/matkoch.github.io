@@ -2,9 +2,9 @@
 title: Reusable Build Components with Interface Default Implementations
 key: reusable-build-components-with-interface-default-implementations
 tags:
-- Build Automation
-- NUKE
+- Build Pipelines
 - C# 8
+- NUKE
 - .NET
 mode: immersive
 header:
