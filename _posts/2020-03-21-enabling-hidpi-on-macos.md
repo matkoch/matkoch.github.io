@@ -14,6 +14,8 @@ article_header:
   background_image:
     gradient: 'linear-gradient(135deg, rgba(34, 0, 170 , .2), rgba(139, 34, 139, .2))'
     src: assets/images/2020-03-21-enabling-hidpi-on-macos/cover.jpg
+image_author_name: Michael
+image_author_link: https://unsplash.com/@polygonglider
 ---
 
 ***Disclaimer: Instructions here are provided without any warranty. It's a collection of steps. Also, I've only been able to enable a couple of HiDPI resolutions, but not all that I anticipated to.***

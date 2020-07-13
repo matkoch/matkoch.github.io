@@ -19,6 +19,8 @@ article_header:
     gradient: 'linear-gradient(135deg, rgba(34, 0, 170 , .2), rgba(139, 34, 139, .2))'
     src: assets/images/2020-07-01-road-to-cross-platform-setup-and-bootstrapping-in-dotnet/cover.jpg
 twitter_card: assets/images/2020-07-01-road-to-cross-platform-setup-and-bootstrapping-in-dotnet/thumbnail.jpeg
+image_author_name: Cécile Brasseur
+image_author_link: https://unsplash.com/@_cecilencieux
 ---
 
 ***TL;DR: PowerShell and Bash scripts are indispensable for developers. While benefiting from being transparent compared to executables, they're not exactly easy to read by users nor easy to write by maintainers, and also suffer from duplication for different operating systems. With the .NET Core SDK, this issue is mostly solved using .NET Global Tools. Nevertheless, global tools come at the cost of requiring the SDK to be pre-installed. Several workarounds for local and build server environments exist, however, shell scripts are really the only solid solution. Single-entry scripts can help to erase the last relics from PowerShell and Bash scripts for documentation and end-users.***

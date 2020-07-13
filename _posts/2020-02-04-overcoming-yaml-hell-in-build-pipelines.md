@@ -21,6 +21,8 @@ article_header:
     gradient: 'linear-gradient(135deg, rgba(34, 0, 170 , .2), rgba(139, 34, 139, .2))'
     src: assets/images/2020-02-04-overcoming-yaml-hell-in-build-pipelines/cover.jpg
 twitter_card: assets/images/2020-02-04-overcoming-yaml-hell-in-build-pipelines/thumbnail.jpeg
+image_author_name: Osman Rana
+image_author_link: https://unsplash.com/@osmanrana
 ---
 
 <script>
