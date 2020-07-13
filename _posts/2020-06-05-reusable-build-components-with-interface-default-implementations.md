@@ -207,29 +207,6 @@ class Build : BaseBuild
 
 Here, we're actually overriding an existing target, and call `Base` to execute the original target definition. This essentially mimics a `base.<Method>` call in the realm of target definitions.
 
-<!--
-## Calling Members Non-Virtual
-
-For the new fluent methods `Base` ad `Inherit`, there was one interesting issue that we had to solve. In order to let an overridden target inherit from its base declaration (or a re-implemented target with default implementation), we needed to **make non-virtual calls using reflection**. This wasn't exactly easy, since even when reflecting on a member through its declaring type, it will follow the principle of [polymorphism](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/polymorphism) and call the member virtual. With a [little bit of help from Stack Overflow](https://stackoverflow.com/a/14415506/568266), we ended up implementing the following generic method:
-
-{% highlight csharp linenos %}
-public static TResult GetValueNonVirtual<TResult>(this MemberInfo member, object obj, params object[] arguments)
-{
-    ControlFlow.Assert(member is PropertyInfo || member is MethodInfo, "member is PropertyInfo || member is MethodInfo");
-    var method = member is PropertyInfo property
-        ? property.GetMethod
-        : (MethodInfo) member;
-
-    var funcType = Expression.GetFuncType(method.GetParameters().Select(x => x.ParameterType)
-        .Concat(method.ReturnType).ToArray());
-    var functionPointer = method.NotNull("method != null").MethodHandle.GetFunctionPointer();
-    var nonVirtualDelegate = (Delegate) Activator.CreateInstance(funcType, obj, functionPointer)
-        .NotNull("nonVirtualDelegate != null");
-
-    return (TResult) nonVirtualDelegate.DynamicInvoke(arguments);
-}
-{% endhighlight %}-->
-
 ## Conclusion
 
 Default implementations in interfaces will probably not make it to every codebase out there. For the purpose of defining reusable build components and integrating them into specific build pipelines though, they're the perfect fit. We're no longer coupled to use a strict hierarchy of build targets, but instead we can **compose our build from multiple independent targets and connect them as needed**. Most importantly, we reduce the maintenance cost when different projects need to be built the same way. With NUKE, we [will continue to add more build components](https://github.com/nuke-build/nuke/tree/develop/source/Nuke.Components) following this approach.

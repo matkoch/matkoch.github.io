@@ -3,6 +3,7 @@ title: Non-Virtual Invocations in .NET
 tags:
 - .NET
 - C#
+- Reflection
 mode: immersive
 header:
   theme: dark
