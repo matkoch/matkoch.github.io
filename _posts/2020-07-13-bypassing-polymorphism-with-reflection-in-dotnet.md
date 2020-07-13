@@ -1,5 +1,5 @@
 ---
-title: Non-Virtual Invocations in .NET
+title: Bypassing Polymorphism with Reflection in .NET
 tags:
 - .NET
 - C#
