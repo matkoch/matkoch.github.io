@@ -40,6 +40,18 @@
     font-weight: map-get($base, font-weight-bold);
   }
 
+  .overlay__photo_credit {
+    font-size: map-get($base, font-size-sm);
+    font-style: italic;
+    @include media-breakpoint-down(lg) {
+      font-size: map-get($base, font-size-xs);
+    }
+    @include media-breakpoint-down(md) {
+      font-size: map-get($base, font-size-xs);
+    }
+    font-weight: map-get($base, font-weight);
+  }
+
   .article__header {
     margin-top: 0;
   }

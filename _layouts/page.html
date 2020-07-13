@@ -148,9 +148,9 @@ layout: base
                   {%- endif -%}
                     {%- include article-info.html article=page semantic=false -%}
                     {%- include article-header.html article=page semantic=false -%}
-<!--                    {%- if page.excerpt -%}-->
-<!--                      <p class="overlay__excerpt">{{ page.excerpt | strip_html | strip_newlines | strip | truncate: _article_header_excerpt_truncate }}</p>-->
-<!--                    {%- endif -%}-->
+                    {%- if page.image_author_link -%}
+                      <p class="overlay__photo_credit"><span>Photo by <a href="{{ page.image_author_link }}">{{ page.image_author_name }}</a> on <a href="https://unsplash.com">Unsplash</a></span></p>
+                    {%- endif -%}
                     {%- if page.article_header.actions -%}
                       <ul class="menu">
                         {%- for _action in page.article_header.actions -%}
