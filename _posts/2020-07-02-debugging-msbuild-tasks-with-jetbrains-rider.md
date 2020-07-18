@@ -104,6 +104,39 @@ public class CustomTask : ContextAwareTask
 
 ## Wiring the Task
 
+{% highlight xml linenos %}
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <NukeTasksNamespace>Nuke.MSBuildTasks</NukeTasksNamespace>
+    <NukeTasksAssembly>$(MSBuildThisFileDirectory)\$(NukeTasksNamespace).dll</NukeTasksAssembly>
+  </PropertyGroup>
+
+  <UsingTask TaskName="$(NukeTasksNamespace).CodeGenerationTask" AssemblyFile="$(NukeTasksAssembly)" />
+
+  <!-- Default Properties -->
+  <PropertyGroup>
+    <NukeContinueOnError Condition="'$(NukeContinueOnError)' == ''">False</NukeContinueOnError>
+    <NukeTaskTimeout Condition="'$(NukeTimeout)' == ''">5000</NukeTaskTimeout>
+
+    <NukeBaseDirectory Condition="'$(NukeBaseDirectory)' == ''">$(MSBuildProjectDirectory)</NukeBaseDirectory>
+    <NukeUseNestedNamespaces Condition="'$(NukeUseNestedNamespaces)' == ''">False</NukeUseNestedNamespaces>
+    <NukeRepositoryUrl Condition="'$(NukeRepositoryUrl)' == ''">$(RepositoryUrl)</NukeRepositoryUrl>
+    <NukeUpdateReferences Condition="'$(NukeUpdateReferences)' == ''">True</NukeUpdateReferences>
+  </PropertyGroup>
+
+  <Target Name="NukeCodeGeneration" BeforeTargets="CoreCompile" Condition="'@(NukeSpecificationFiles)' != ''">
+    <CodeGenerationTask
+      SpecificationFiles="@(NukeSpecificationFiles)"
+      BaseDirectory="$(NukeBaseDirectory)"
+      UseNestedNamespaces="$(NukeUseNestedNamespaces)"
+      BaseNamespace="$(NukeBaseNamespace)"
+      UpdateReferences="$(NukeUpdateReferences)"/>
+  </Target>
+
+</Project>
+{% endhighlight %}
+
 ## Creating a NuGet Package
 
 Figuring out how MSBuild works in different environments can take a while. For instance, a project targeting `netcoreapp2.1` would still use MSBuild running on .NET Framework inside Visual Studio, while the same project would be compiled with MSBuild for .NET Core when calling `dotnet build` on the same workstation.
