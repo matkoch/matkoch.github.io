@@ -14,8 +14,8 @@ article_header:
   background_color: '#203028'
   background_image:
     gradient: 'linear-gradient(135deg, rgba(0, 0, 100 , .5), rgba(60, 34, 60, .4))'
-    src: assets/images/2020-02-11-debugging-msbuild-tasks-with-jetbrains-rider/cover.jpg
-twitter_card: assets/images/2020-02-11-debugging-msbuild-tasks-with-jetbrains-rider/thumbnail.jpeg
+    src: assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/cover.jpg
+twitter_card: assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/thumbnail.jpeg
 ---
 
 <!-- TODO: or even right from the start -->
@@ -188,13 +188,13 @@ Deleting from the cache, or incrementing versions – all those are rather poor 
 
 As a first step to enable first-class debugging, we will call `dotnet publish --framework netcoreapp2.1` to **publish the MSBuildTasks project**. When using JetBrains Rider, the most efficient way is to create a [run configuration](https://www.jetbrains.com/help/rider/Run_Debug_Configuration.html):
 
-![Publishing MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-debugging-msbuild-tasks-with-jetbrains-rider/run-configuration-publish.png){:width="750px" .shadow}
+![Publishing MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-publish.png){:width="750px" .shadow}
 
 In the second step, we call `MSBuild.dll /t:Clean;Restore;Pack /p:NukeMSBuildIntegration=True` to **invoke MSBuild on the project** that we want to test our MSBuild task with:
 
-![Running MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-debugging-msbuild-tasks-with-jetbrains-rider/run-configuration-run.png){:width="750px" .shadow}
+![Running MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-run.png){:width="750px" .shadow}
 
-![Running MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-debugging-msbuild-tasks-with-jetbrains-rider/run-configuration-list.png){:width="750px" .shadow}
+![Running MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-list.png){:width="750px" .shadow}
 
 Manually reference props/targets files, as they won't be imported when referencing as ProjectReference. Packing each time is also possible, but cumbersome:
 
