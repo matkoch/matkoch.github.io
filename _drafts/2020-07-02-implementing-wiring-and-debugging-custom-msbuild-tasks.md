@@ -18,6 +18,42 @@ article_header:
 twitter_card: assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/thumbnail.jpeg
 ---
 
+<script>
+{%- include scripts/lib/swiper.js -%}
+var SOURCES = window.TEXT_VARIABLES.sources;
+window.Lazyload.js(SOURCES.jquery, function() {
+  $('.swiper-demo').swiper();
+});
+</script>
+
+<style>
+  .swiper-demo {
+    margin: 30px auto;
+  }
+  .swiper-demo .swiper__slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #fff;
+  }
+  .swiper-demo .swiper__slide:nth-child(even) {
+    background-color: #ff69b4;
+  }
+  .swiper-demo .swiper__slide:nth-child(odd) {
+    background-color: #2593fc;
+  }
+  .swiper-demo--dark .swiper__slide:nth-child(even) {
+    background-color: #312;
+  }
+  .swiper-demo--dark .swiper__slide:nth-child(odd) {
+    background-color: #123;
+  }
+  .swiper-demo--image .swiper__slide:nth-child(n) {
+    background-color: #000;
+  }
+</style>
+
 <!-- TODO: or even right from the start -->
 At some point, much of the tooling around .NET projects ends up having to integrate with MSBuild, the _low-level_ build system in the .NET ecosystem. Examples of these tools are:
 
@@ -80,95 +116,108 @@ As already hinted, our task assembly will likely have dependencies to other proj
 
 <div class="tweet" tweetID="882946773332803584">task assemblies that have dependencies on other assemblies is really messy in MSBuild 15. Working around it could be its own blog post</div>
 
-Meanwhile we're at MSBuild 16 already, and some of the [problems that Nate described](https://natemcmaster.com/blog/2017/11/11/msbuild-task-with-dependencies/) in his blog have been addressed. I am by no means an expert in properly resolving dependencies, but [Andrew Arnott](https://twitter.com/aarnott) came up with the `ContextAwareTask` – originally [used in Nerdbank.GitVersion](https://github.com/dotnet/Nerdbank.GitVersioning/blob/3e4e1f8249ba70fd576b524ce12398ee398884fc/src/Nerdbank.GitVersioning.Tasks/ContextAwareTask.cs) – and it's working out great for many folks. As for the actual implementation, we won't go into too much detail but will just look at a basic example:
+Meanwhile we're at MSBuild 16, and some of the [problems that Nate described](https://natemcmaster.com/blog/2017/11/11/msbuild-task-with-dependencies/) in his blog have already been addressed. I am by no means an expert in properly resolving dependencies, but [Andrew Arnott](https://twitter.com/aarnott) came up with the `ContextAwareTask` – originally [used in Nerdbank.GitVersion](https://github.com/dotnet/Nerdbank.GitVersioning/blob/3e4e1f8249ba70fd576b524ce12398ee398884fc/src/Nerdbank.GitVersioning.Tasks/ContextAwareTask.cs) – and it's working out great for many folks:
 
 {% highlight batch linenos %}
 using System;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-public class CustomTask : ContextAwareTask
-{
-    [Required]
-    public string Property { get; set; }
-
-    [Required]
-    public ITaskItem[] Items { get; set; }
-
-    public override bool Execute()
+namespace MyCustomTasks
+    public class CustomTask : ContextAwareTask
     {
-        return true;
+        // public IBuildEngine BuildEngine { get; set; }
+    
+        [Required]
+        public string StringParameter { get; set; }
+    
+        public ITaskItem[] FilesParameter { get; set; }
+    
+        public override bool Execute()
+        {
+            return true;
+        }
     }
 }
 {% endhighlight %}
 
+ As for the actual implementation, we won't go into too much detail but **focus on the most important bits**. MSBuild will call the `Execute` method and its return value signals whether the task succeeded or failed. The inherited `BuildEngine` property allows us to log information, warning, and error messages. Users of the task can opt-in to treat warnings of the task as errors by setting the `TreatWarningsAsErrors` property. The `StringParameter` property is a required input value. The `FilesParameter` item group is optional and can contain a list of files. In many situations, a `ITaskItem` can also be a ordinary string value, like for `PackageReference`.
+
 ## Wiring the Task
+
+In this next step we'll **wire up the task implementation in a `.targets` file**, which will be included in our NuGet package and automatically loaded from a referencing project. In this file – here `CustomTasks.targets` we'll load the task assembly, create a new XML task element, define a couple default values, and create a new target that calls the task:
 
 {% highlight xml linenos %}
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <NukeTasksNamespace>Nuke.MSBuildTasks</NukeTasksNamespace>
-    <NukeTasksAssembly>$(MSBuildThisFileDirectory)\$(NukeTasksNamespace).dll</NukeTasksAssembly>
+    <CustomTasksAssembly>$(MSBuildThisFileDirectory)\$(MSBuildThisFileName).dll</CustomTasksAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="$(NukeTasksNamespace).CodeGenerationTask" AssemblyFile="$(NukeTasksAssembly)" />
+  <UsingTask TaskName="$(MSBuildThisFileName).CustomTask" AssemblyFile="$(CustomTasksAssembly)" />
 
   <!-- Default Properties -->
   <PropertyGroup>
-    <NukeContinueOnError Condition="'$(NukeContinueOnError)' == ''">False</NukeContinueOnError>
-    <NukeTaskTimeout Condition="'$(NukeTimeout)' == ''">5000</NukeTaskTimeout>
-
-    <NukeBaseDirectory Condition="'$(NukeBaseDirectory)' == ''">$(MSBuildProjectDirectory)</NukeBaseDirectory>
-    <NukeUseNestedNamespaces Condition="'$(NukeUseNestedNamespaces)' == ''">False</NukeUseNestedNamespaces>
-    <NukeRepositoryUrl Condition="'$(NukeRepositoryUrl)' == ''">$(RepositoryUrl)</NukeRepositoryUrl>
-    <NukeUpdateReferences Condition="'$(NukeUpdateReferences)' == ''">True</NukeUpdateReferences>
+    <CustomTaskContinueOnError Condition="'$(CustomTaskContinueOnError)' == ''">False</CustomTaskContinueOnError>
+    <CustomTaskStringParameter Condition="'$(CustomTaskStringParameter)' == ''">Default Value</CustomTaskStringParameter>
   </PropertyGroup>
 
-  <Target Name="NukeCodeGeneration" BeforeTargets="CoreCompile" Condition="'@(NukeSpecificationFiles)' != ''">
-    <CodeGenerationTask
-      SpecificationFiles="@(NukeSpecificationFiles)"
-      BaseDirectory="$(NukeBaseDirectory)"
-      UseNestedNamespaces="$(NukeUseNestedNamespaces)"
-      BaseNamespace="$(NukeBaseNamespace)"
-      UpdateReferences="$(NukeUpdateReferences)"/>
+  <Target Name="RunCustomTask" BeforeTargets="CoreCompile">
+    <CustomTask
+      ContinueOnError="$(CustomTaskContinueOnError)"
+      StringParameter="$(CustomTaskStringParameter)"
+      FilesParameter="@(CustomTaskFilesParameter)" />
   </Target>
 
 </Project>
 {% endhighlight %}
 
-## Creating a NuGet Package
+Defining the `CustomTasksAssembly` (Line 4) does not only help us to not repeat ourselves when we reference multiple tasks from the same assembly (Line 7), but is also great for debugging, as we'll see later. Also note that we're using a couple of [well-known MSBuild properties](https://docs.microsoft.com/visualstudio/msbuild/msbuild-reserved-and-well-known-properties) like `MSBuildThisFileDirectory` and `MSBuildThisFileName` to avoid magic strings being scattered around our file. Following best practices makes renaming or relocating the task more effortless! The task invocation also uses the `ContinueOnError` property (Line 17) – one of the [common properties available to all task elements](https://docs.microsoft.com/visualstudio/msbuild/task-element-msbuild). 
 
-Figuring out how MSBuild works in different environments can take a while. For instance, a project targeting `netcoreapp2.1` would still use MSBuild running on .NET Framework inside Visual Studio, while the same project would be compiled with MSBuild for .NET Core when calling `dotnet build` on the same workstation.
+## Creating the NuGet Package
 
-Now -> [include MSBuild targets](https://docs.microsoft.com/en-us/nuget/create-packages/creating-a-package#include-msbuild-props-and-targets-in-a-package) in the package.
-Put custom MSBuild task and targets files into NuGet package:
-
-{% highlight xml linenos %}
-<ItemGroup Condition="'$(TargetFramework)' == ''">
-  <None Include="$(MSBuildProjectName).props" PackagePath="build" Pack="true" />
-  <None Include="$(MSBuildProjectName).targets" PackagePath="build" Pack="true" />
-  <None Include="..\Nuke.MSBuildTasks\Nuke.MSBuildTasks.targets" PackagePath="build\netcore" Pack="true" />
-  <None Include="..\Nuke.MSBuildTasks\Nuke.MSBuildTasks.targets" PackagePath="build\netfx" Pack="true" />
-  <None Include="..\Nuke.MSBuildTasks\bin\$(Configuration)\netcoreapp2.1\publish\**\*.*" PackagePath="build\netcore" Pack="true" />
-  <None Include="..\Nuke.MSBuildTasks\bin\$(Configuration)\net472\publish\**\*.*" PackagePath="build\netfx" Pack="true" />
-</ItemGroup>
-{% endhighlight %}
-
-
+As already mentioned, we won't pack the MSBuild tasks project directly, but have another project `MyProduct` **include the task assembly and `.targets` file in its package**. In order to load the `CustomTasks.targets` file from the previous section, we create another `MyProduct.targets` file in our `MyProduct` project (TODO: that gets [automatically included](https://docs.microsoft.com/nuget/create-packages/creating-a-package#include-msbuild-props-and-targets-in-a-package)):
 
 {% highlight xml linenos %}
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <PropertyGroup Condition="'$(NukeMSBuildTasks)' == ''">
-    <NukeMSBuildTasks Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)\netcore</NukeMSBuildTasks>
-    <NukeMSBuildTasks Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)\netfx</NukeMSBuildTasks>
+  <PropertyGroup Condition="'$(CustomTasksDirectory)' == ''">
+    <CustomTasksDirectory Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)\netcore</CustomTasksDirectory>
+    <CustomTasksDirectory Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)\netfx</CustomTasksDirectory>
   </PropertyGroup>
 
-  <Import Project="$(NukeMSBuildTasks)\Nuke.MSBuildTasks.targets" Condition="'$(NukeMSBuildIntegration)' != 'False'" />
+  <Import Project="$(CustomTasksDirectory)\CustomTasks.targets" Condition="'$(EnableCustomTasks)' != 'False'" />
 </Project>
 {% endhighlight %}
+
+First, we define a property `CustomTasksDirectory` that points to the directory containing our task infrastructure. Note that we need to **take the MSBuild runtime into account** by checking `MSBuildRuntimeType` (Line 5-6). A project targeting `netcoreapp2.1` would still use .NET Framework for running MSBuild inside Visual Studio, while the same project would use MSBuild for .NET Core when compiling via `dotnet build` from the command-line. Afterwards, we import the `.targets` file under the condition that `EnableCustomTasks` is enabled (Line 9). This little trick allows us to **easily opt-out from attaching the task**. Faulty MSBuild tasks have a high chance to completely break a referencing project and to cause confusion about where the error originates from:
+
+<div class="tweet" tweetID="1072394313592647684">I really try to like @JetBrainsRider - but I just don’t have enough time for it...</div>
+
+Before we can finally pack our package, we need to run `dotnet publish` on the tasks project for both target frameworks:
+
+{% highlight batch linenos %}
+dotnet publish --framework netcoreapp2.1
+dotnet publish --framework net472
+{% endhighlight %}
+
+
+
+{% highlight xml linenos %}
+<ItemGroup Condition="'$(TargetFramework)' == ''">
+  <None Include="$(MSBuildProjectName).props" PackagePath="build" Pack="true" />
+  <None Include="$(MSBuildProjectName).targets" PackagePath="build" Pack="true" />
+  <None Include="..\CustomTasks\CustomTasks.targets" PackagePath="build\netcore" Pack="true" />
+  <None Include="..\CustomTasks\CustomTasks.targets" PackagePath="build\netfx" Pack="true" />
+  <None Include="..\CustomTasks\bin\$(Configuration)\netcoreapp2.1\publish\**\*.*" PackagePath="build\netcore" Pack="true" />
+  <None Include="..\CustomTasks\bin\$(Configuration)\net472\publish\**\*.*" PackagePath="build\netfx" Pack="true" />
+</ItemGroup>
+{% endhighlight %}
+
+
+
+
 
 On pitfall for me was that loading the MSBuild task is not subject to [NuGet's support multiple .NET versions](https://docs.microsoft.com/en-us/nuget/create-packages/supporting-multiple-target-frameworks), meaning that when we switch our target framework from `net47` to `netcoreapp2.1`, it won't use a different 
 
@@ -201,23 +250,33 @@ Manually reference props/targets files, as they won't be imported when referenci
 {% highlight xml linenos %}
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\source\Nuke.Common\Nuke.Common.props" />
+  <Import Project="..\source\MyLibrary\MyLibrary.props" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <NukeMSBuildIntegration Condition="'$(NukeMSBuildIntegration)' == ''">False</NukeMSBuildIntegration>
-    <NukeMSBuildTasks>$(MSBuildThisFileDirectory)\..\source\Nuke.MSBuildTasks\bin\Debug\netcoreapp2.1\publish</NukeMSBuildTasks>
+    <EnableCustomTasks Condition="'$(EnableCustomTasks)' == ''">False</EnableCustomTasks>
+    <CustomTasksDirectory>$(MSBuildThisFileDirectory)\..\source\Nuke.MSBuildTasks\bin\Debug\netcoreapp2.1\publish</CustomTasksDirectory>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\source\Nuke.Common\Nuke.Common.csproj" />
+    <ProjectReference Include="..\source\MyLibrary\MyLibrary.csproj" />
   </ItemGroup>
 
-  <Import Project="..\source\Nuke.Common\Nuke.Common.targets" />
+  <Import Project="..\source\MyLibrary\MyLibrary.targets" />
 
 </Project>
 {% endhighlight %}
+
+<div class="swiper swiper-demo swiper-demo--image" style="max-width: 550px">
+  <div class="swiper__wrapper">
+    <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/project-properties.png"/></div>
+    <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/project-imports.png"/></div>
+  </div>
+  <div class="swiper__button swiper__button--prev fas fa-chevron-left"></div>
+  <div class="swiper__button swiper__button--next fas fa-chevron-right"></div>
+</div>
+
 
 ## Acknowledgements
 
