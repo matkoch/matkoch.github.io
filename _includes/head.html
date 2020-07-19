@@ -14,6 +14,10 @@
 <meta name="twitter:image" content="{{ page.twitter_card | prepend: '/' | prepend: site.url }}" />
 {%- endif -%}
 
+{%- if page.redirect -%}
+<meta http-equiv="Refresh" content="0; url='{{ page.redirect | prepend: '/' | prepend: site.url }}'" />
+{%- endif -%}
+
 <meta name="description" content="{%- if page.excerpt -%}{{ page.excerpt | strip_html | strip_newlines | strip | truncate: 160 }}{%- else -%}{{ site.description }}{%- endif -%}">
 <link rel="canonical" href="{%- include snippets/page-url.html -%}">
 
