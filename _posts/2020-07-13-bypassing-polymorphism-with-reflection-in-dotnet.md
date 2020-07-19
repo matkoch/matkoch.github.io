@@ -46,4 +46,4 @@ var method = typeof(object).GetMethod("ToString").Single();
 var value = method.GetValueNonVirtual(dto);
 {% endhighlight %}
 
-Reflection FTW! 😎
+**Reflection FTW!** 😎
