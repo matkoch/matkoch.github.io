@@ -21,6 +21,8 @@
 
 <div class="tweet" tweetID="1072394313592647684">I really try to like @JetBrainsRider - but I just don’t have enough time for it...</div>
 
+- It's an anti-pattern!
+
 ## .NET CLI and Shell Scripts
 
 - Both of the above cases can easily be solved without messing with the project system

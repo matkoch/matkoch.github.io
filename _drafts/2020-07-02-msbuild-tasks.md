@@ -84,18 +84,18 @@ From my own experience, I'd recommend to **keep the task assembly small** and mo
 
 {% highlight xml linenos %}
 <ItemGroup>
-  <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.3.0" CopyLocal="false" Publish="false" ExcludeAssets="runtime" />
-  <PackageReference Include="Microsoft.Build.Framework" Version="16.3.0" CopyLocal="false" Publish="false" ExcludeAssets="runtime" />
-  <PackageReference Include="System.Collections.Immutable" Version="1.6.0" CopyLocal="false" Publish="false" />
-  <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" CopyLocal="false" Publish="false" />
+  <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.3.0" CopyLocal="false" Publish="false" ExcludeAssets="runtime"/>
+  <PackageReference Include="Microsoft.Build.Framework" Version="16.3.0" CopyLocal="false" Publish="false" ExcludeAssets="runtime"/>
+  <PackageReference Include="System.Collections.Immutable" Version="1.6.0" CopyLocal="false" Publish="false"/>
+  <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" CopyLocal="false" Publish="false"/>
 </ItemGroup>
 
 <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-  <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="1.16.30" CopyLocal="false" Publish="false" />
+  <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="1.16.30" CopyLocal="false" Publish="false"/>
 </ItemGroup>
 
 <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
-  <PackageReference Include="System.Text.Encoding.CodePages" Version="4.6.0" CopyLocal="false" Publish="false" />
+  <PackageReference Include="System.Text.Encoding.CodePages" Version="4.6.0" CopyLocal="false" Publish="false"/>
 </ItemGroup>
 {% endhighlight %}
 
@@ -107,7 +107,7 @@ Note that the **MSBuild references** are part of every MSBuild installation and 
     <NonCopyLocalPackageReferences Condition="'%(PackageReference.CopyLocal)' == 'false'">;@(PackageReference);</NonCopyLocalPackageReferences>
   </PropertyGroup>
   <ItemGroup>
-    <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="$(NonCopyLocalPackageReferences.Contains(';%(ReferenceCopyLocalPaths.NuGetPackageId);'))" />
+    <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="$(NonCopyLocalPackageReferences.Contains(';%(ReferenceCopyLocalPaths.NuGetPackageId);'))"/>
   </ItemGroup>
 </Target>
 {% endhighlight %}
@@ -123,17 +123,15 @@ using System;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-namespace MyCustomTasks
+namespace CustomTasks
+{
     public class CustomTask : ContextAwareTask
     {
-        // public IBuildEngine BuildEngine { get; set; }
-    
-        [Required]
-        public string StringParameter { get; set; }
-    
+        [Required] public string StringParameter { get; set; }
+
         public ITaskItem[] FilesParameter { get; set; }
-    
-        public override bool Execute()
+
+        protected override bool ExecuteInner()
         {
             return true;
         }
@@ -141,7 +139,7 @@ namespace MyCustomTasks
 }
 {% endhighlight %}
 
- As for the actual implementation, we won't go into too much detail but **focus on the most important bits**. MSBuild will call the `Execute` method and its return value signals whether the task succeeded or failed. The inherited `BuildEngine` property allows us to log information, warning, and error messages. Users of the task can opt-in to treat warnings of the task as errors by setting the `TreatWarningsAsErrors` property. The `StringParameter` property is a required input value. The `FilesParameter` item group is optional and can contain a list of files. In many situations, a `ITaskItem` can also be a ordinary string value, like for `PackageReference`.
+ As for the actual implementation, we won't go into too much detail but **focus on the most important bits**. MSBuild calls the `Execute` method which will later delegate to `ExecuteInner` and its return value signals whether the task succeeded or failed. The inherited `BuildEngine` property allows us to log information, warning, and error messages. Users of the task can opt-in to treat warnings of the task as errors by setting the `TreatWarningsAsErrors` property. The `StringParameter` property is a required input value. The `FilesParameter` item group is optional and can contain a list of files. In many situations, a `ITaskItem` can also be a ordinary string value, like for `PackageReference`.
 
 ## Wiring the Task
 
@@ -150,11 +148,12 @@ In this next step we'll **wire up the task implementation in a `.targets` file**
 {% highlight xml linenos %}
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
   <PropertyGroup>
     <CustomTasksAssembly>$(MSBuildThisFileDirectory)\$(MSBuildThisFileName).dll</CustomTasksAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="$(MSBuildThisFileName).CustomTask" AssemblyFile="$(CustomTasksAssembly)" />
+  <UsingTask TaskName="$(MSBuildThisFileName).CustomTask" AssemblyFile="$(CustomTasksAssembly)"/>
 
   <!-- Default Properties -->
   <PropertyGroup>
@@ -164,9 +163,9 @@ In this next step we'll **wire up the task implementation in a `.targets` file**
 
   <Target Name="RunCustomTask" BeforeTargets="CoreCompile">
     <CustomTask
-      ContinueOnError="$(CustomTaskContinueOnError)"
-      StringParameter="$(CustomTaskStringParameter)"
-      FilesParameter="@(CustomTaskFilesParameter)" />
+            ContinueOnError="$(CustomTaskContinueOnError)"
+            StringParameter="$(CustomTaskStringParameter)"
+            FilesParameter="@(CustomTaskFilesParameter)"/>
   </Target>
 
 </Project>
@@ -176,22 +175,32 @@ Defining the `CustomTasksAssembly` (Line 4) does not only help us to not repeat 
 
 ## Creating the NuGet Package
 
-As already mentioned, we won't pack the MSBuild tasks project directly, but have another project `MyProduct` **include the task assembly and `.targets` file in its package**. In order to load the `CustomTasks.targets` file from the previous section, we create another `MyProduct.targets` file in our `MyProduct` project (TODO: that gets [automatically included](https://docs.microsoft.com/nuget/create-packages/creating-a-package#include-msbuild-props-and-targets-in-a-package)):
+As already mentioned, we won't pack the MSBuild tasks project directly, but have another project `MainLibrary` **include the task infrastructure in its package**. In order to load the `CustomTasks.targets` file from the previous section, we create another `MainLibrary.props` and `MainLibrary.targets` file in our `MainLibrary` project (TODO: that gets [automatically included](https://docs.microsoft.com/nuget/create-packages/creating-a-package#include-msbuild-props-and-targets-in-a-package)):
 
 {% highlight xml linenos %}
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <PropertyGroup Condition="'$(CustomTasksDirectory)' == ''">
+  <PropertyGroup>
     <CustomTasksDirectory Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)\netcore</CustomTasksDirectory>
     <CustomTasksDirectory Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)\netfx</CustomTasksDirectory>
   </PropertyGroup>
 
-  <Import Project="$(CustomTasksDirectory)\CustomTasks.targets" Condition="'$(EnableCustomTasks)' != 'False'" />
 </Project>
 {% endhighlight %}
 
-First, we define a property `CustomTasksDirectory` that points to the directory containing our task infrastructure. Note that we need to **take the MSBuild runtime into account** by checking `MSBuildRuntimeType` (Line 5-6). A project targeting `netcoreapp2.1` would still use .NET Framework for running MSBuild inside Visual Studio, while the same project would use MSBuild for .NET Core when compiling via `dotnet build` from the command-line. Afterwards, we import the `.targets` file under the condition that `EnableCustomTasks` is enabled (Line 9). This little trick allows us to **easily opt-out from attaching the task**. Faulty MSBuild tasks have a high chance to completely break a referencing project and to cause confusion about where the error originates from:
+In the `.props` file, we're defining a property `CustomTasksDirectory` that points to the directory containing our task. Note that we need to **take the MSBuild runtime into account** by checking `MSBuildRuntimeType` (Line 5-6). A project targeting `netcoreapp2.1` would still use .NET Framework for running MSBuild inside Visual Studio, while the same project would use MSBuild for .NET Core when compiling via `dotnet build` from the command-line. In the `.targets` file, we will import the `CustomTasks.targets` file from the embedded directory: 
+
+{% highlight xml linenos %}
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <Import Project="$(CustomTasksDirectory)\CustomTasks.targets" Condition="'$(EnableCustomTasks)' != 'False'" />
+
+</Project>
+{% endhighlight %}
+
+Note that we add a condition to check if `EnableCustomTasks` is enabled (Line 9). This little trick allows us to **easily opt-out from attaching the task**. Faulty MSBuild tasks have a high chance to completely break a referencing project and to cause confusion about where the error originates from:
 
 <div class="tweet" tweetID="1072394313592647684">I really try to like @JetBrainsRider - but I just don’t have enough time for it...</div>
 
@@ -206,18 +215,14 @@ dotnet publish --framework net472
 
 {% highlight xml linenos %}
 <ItemGroup Condition="'$(TargetFramework)' == ''">
-  <None Include="$(MSBuildProjectName).props" PackagePath="build" Pack="true" />
-  <None Include="$(MSBuildProjectName).targets" PackagePath="build" Pack="true" />
-  <None Include="..\CustomTasks\CustomTasks.targets" PackagePath="build\netcore" Pack="true" />
-  <None Include="..\CustomTasks\CustomTasks.targets" PackagePath="build\netfx" Pack="true" />
-  <None Include="..\CustomTasks\bin\$(Configuration)\netcoreapp2.1\publish\**\*.*" PackagePath="build\netcore" Pack="true" />
-  <None Include="..\CustomTasks\bin\$(Configuration)\net472\publish\**\*.*" PackagePath="build\netfx" Pack="true" />
+  <None Include="$(MSBuildProjectName).props" PackagePath="build" Pack="true"/>
+  <None Include="$(MSBuildProjectName).targets" PackagePath="build" Pack="true"/>
+  <None Include="..\CustomTasks\CustomTasks.targets" PackagePath="build\netcore" Pack="true"/>
+  <None Include="..\CustomTasks\CustomTasks.targets" PackagePath="build\netfx" Pack="true"/>
+  <None Include="..\CustomTasks\bin\$(Configuration)\netcoreapp2.1\publish\**\*.*" PackagePath="build\netcore" Pack="true"/>
+  <None Include="..\CustomTasks\bin\$(Configuration)\net472\publish\**\*.*" PackagePath="build\netfx" Pack="true"/>
 </ItemGroup>
 {% endhighlight %}
-
-
-
-
 
 On pitfall for me was that loading the MSBuild task is not subject to [NuGet's support multiple .NET versions](https://docs.microsoft.com/en-us/nuget/create-packages/supporting-multiple-target-frameworks), meaning that when we switch our target framework from `net47` to `netcoreapp2.1`, it won't use a different 
 
@@ -250,20 +255,20 @@ Manually reference props/targets files, as they won't be imported when referenci
 {% highlight xml linenos %}
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\source\MyLibrary\MyLibrary.props" />
+  <Import Project="..\MainLibrary\MainLibrary.props"/>
 
   <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
     <EnableCustomTasks Condition="'$(EnableCustomTasks)' == ''">False</EnableCustomTasks>
-    <CustomTasksDirectory>$(MSBuildThisFileDirectory)\..\source\Nuke.MSBuildTasks\bin\Debug\netcoreapp2.1\publish</CustomTasksDirectory>
+    <CustomTasksDirectory>$(MSBuildThisFileDirectory)\..\CustomTasks\bin\Debug\netcoreapp2.1\publish</CustomTasksDirectory>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\source\MyLibrary\MyLibrary.csproj" />
+    <ProjectReference Include="..\MainLibrary\MainLibrary.csproj"/>
   </ItemGroup>
 
-  <Import Project="..\source\MyLibrary\MyLibrary.targets" />
+  <Import Project="..\MainLibrary\MainLibrary.targets"/>
 
 </Project>
 {% endhighlight %}
