@@ -1,8 +1,8 @@
 ---
-title: Enabling HiDPI on MacOS
+title: Enabling HiDPI on macOS
 key: enabling-hidpi-on-macos
 tags:
-- MacOS
+- macOS
 - Notes
 mode: immersive
 header:
@@ -20,11 +20,11 @@ image_author_link: https://unsplash.com/@polygonglider
 
 ***Disclaimer: Instructions here are provided without any warranty. It's a collection of steps. Also, I've only been able to enable a couple of HiDPI resolutions, but not all that I anticipated to.***
 
-This is mostly a post to remind myself of the trouble I've been going through to **enable HiDPI on an external display**. My HP Envy 27 was a problem child from the very beginning. Apparently, it's [not supported in MacOS environments](https://h30434.www3.hp.com/t5/Desktop-Video-Display-and-Touch/Envy-27s-monitor-won-t-give-full-res/td-p/6008349), which I only found out later. Who would have thought that a monitor can have system requirements? Insane! 🙄 There were a couple of suggested solutions though: using different cables and ports (HDMI 1, HDMI 2, DVI), and rebooting MacOS with and without the display attached. At some point it just _worked_, and I could enable a 1440x900 HiDPI resolution with [RDM](https://github.com/avibrazil/RDM/) (Retina Display Menu). HiDPI resolutions are indicated with a little lightning icon:
+This is mostly a post to remind myself of the trouble I've been going through to **enable HiDPI on an external display**. My HP Envy 27 was a problem child from the very beginning. Apparently, it's [not supported in macOS environments](https://h30434.www3.hp.com/t5/Desktop-Video-Display-and-Touch/Envy-27s-monitor-won-t-give-full-res/td-p/6008349), which I only found out later. Who would have thought that a monitor can have system requirements? Insane! 🙄 There were a couple of suggested solutions though: using different cables and ports (HDMI 1, HDMI 2, DVI), and rebooting macOS with and without the display attached. At some point it just _worked_, and I could enable a 1440x900 HiDPI resolution with [RDM](https://github.com/avibrazil/RDM/) (Retina Display Menu). HiDPI resolutions are indicated with a little lightning icon:
 
 ![Retina Display Menu RDM](/assets/images/2020-03-21-enabling-hidpi-on-macos/rdm.png){:width="600px" .shadow}
 
-Then I wanted to **start streaming on Youtube**, which recommends a resolution of `1920x1080`. Most of my supported resolutions had an aspect ratio of 16:10. Only `1280x720` was 16:9. I already knew that one tool that allows adding _custom resolutions_ on MacOS. However, after giving it another try to add `1920x1080`, all of my HiDPI resolutions stopped working. **Never change a running system, I guess!.**
+Then I wanted to **start streaming on Youtube**, which recommends a resolution of `1920x1080`. Most of my supported resolutions had an aspect ratio of 16:10. Only `1280x720` was 16:9. I already knew that one tool that allows adding _custom resolutions_ on macOS. However, after giving it another try to add `1920x1080`, all of my HiDPI resolutions stopped working. **Never change a running system, I guess!.**
 
 ## Forcing HiDPI resolutions
 
@@ -40,7 +40,7 @@ Afterwards, enter the two commands `csrutil disable` – which should be confirm
 
 ### Mount System Folder
 
-Since MacOS Catalina, we additionally need to mount the `/System` as being writable. The command of choice is `sudo mount -uw /`. Be assured that there is another reboot planned at the end of the instructions.
+Since macOS Catalina, we additionally need to mount the `/System` as being writable. The command of choice is `sudo mount -uw /`. Be assured that there is another reboot planned at the end of the instructions.
 
 ### Determine Display IDs
 

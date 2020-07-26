@@ -1,8 +1,8 @@
 ---
-title: Marta - MacOS Finder for developers
+title: Marta - macOS Finder for developers
 key: marta-macos-finder-for-developers
 tags:
-- MacOS
+- macOS
 - Tools
 mode: immersive
 header:
@@ -16,7 +16,7 @@ article_header:
     src: assets/images/2020-01-14-marta/cover.jpg
 ---
 
-Ever since I've fully switched from Windows to MacOS for my daily development, I was looking for a good Finder replacement. On Windows I was just using Windows Explorer, which wasn't great, but good enough. On MacOS however, the **native Finder application is far beyond being developer friendly**. It might be that I've missed to change some secret setting, but some of the **pain points** I had (back then) were:
+Ever since I've fully switched from Windows to macOS for my daily development, I was looking for a good Finder replacement. On Windows I was just using Windows Explorer, which wasn't great, but good enough. On macOS however, the **native Finder application is far beyond being developer friendly**. It might be that I've missed to change some secret setting, but some of the **pain points** I had (back then) were:
 
 - Copying paths from directories or files
 - Navigating to paths from the clipboard
@@ -97,4 +97,4 @@ keyBindings {
 }
 {% endhighlight %}
 
-Yan, thank you so much for completing my MacOS developer experience! 👏
+Yan, thank you so much for completing my macOS developer experience! 👏
