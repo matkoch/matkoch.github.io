@@ -195,7 +195,7 @@ In the `.props` file, we're defining a property `CustomTasksDirectory` that poin
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-    <Import Project="$(CustomTasksDirectory)\CustomTasks.targets" Condition="'$(EnableCustomTasks)' != 'False'" />
+  <Import Project="$(CustomTasksDirectory)\CustomTasks.targets" Condition="'$(EnableCustomTasks)' != 'False'" />
 
 </Project>
 {% endhighlight %}
@@ -290,3 +290,4 @@ I want to add that much of my adventures with MSBuild are only of good nature an
 <div class="tweet" tweetID="1189873542906683392">I think everyone should have a @dasmulli to effectively work with #msbuild. Thank you so much Martin! 👏🏻</div>
 
 If you don't follow him yet, you really should. And sorry to Martin for sending more MSBuild enthusiasts your way! 🤗
+

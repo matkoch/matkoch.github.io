@@ -31,3 +31,10 @@
 
 - [Support for `@(InternalsVisibleTo)` items](https://github.com/dotnet/sdk/pull/3439)
 - [Support for `@(AssemblyMetadata)` items](https://github.com/dotnet/sdk/pull/3440)
+
+
+https://twitter.com/randompunter/status/1274768021312155648
+@randompunter: Control your build environment, don't rely on others', and make it portable so it's exactly the same locally as in CI - build in a container. Doing tons of stuff in a workflow yaml is a smell imho and not fun running, testing, debugging it locally.
+
+https://twitter.com/bradwilson/status/1219653745090293760
+@bradwilson: For me, ./build is not about "does dotnet build work?" but about "how do you do everything else, after dotnet build". Like... packaging, signing, uploading.

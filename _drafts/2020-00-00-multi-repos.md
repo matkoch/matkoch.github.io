@@ -115,6 +115,9 @@ In most situations, having all projects in a single global solution is not going
 
 I spent quite some time trying to find a way to conveniently **convert package references into project references**. Mostly, because there's also the requirement that the project file should _not_ be modified. That means, the original project file should stay intact, when I'm working on it via the local solution. Only when the project is used in our global solution, the reference types should be converted.
 
+https://twitter.com/RicoSuter/status/1228085357092261892
+@RicoSuter: DNT (DotNetTools) - a .NET global tool to manage projects snd solutions, eg bump versions and switch from packages to projects - now supports .NET Core 3.1! #DotNet #DotNetCore
+
 Take a deep breath in. There actually is a way using a `Directory.Build.targets` file to [customize our build](https://docs.microsoft.com/en-us/visualstudio/msbuild/customize-your-build). As a quick reminder, this file will be automatically included from the MSBuild engine when it's located in any parent directory to our project file. Your realize what that means? We can place this file _outside_ the other repositories into our repository containing the global solution. Send your thanksgivings to [Thomas Frenzel](https://github.com/dotnet/sdk/issues/1151#issuecomment-385133284) for this amazing approach:
 
 {%- include_relative 2019-12-12-multi-repository-projects/directory-build.md -%}
