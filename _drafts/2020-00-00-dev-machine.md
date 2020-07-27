@@ -117,9 +117,9 @@ duti -s com.microsoft.VSCode .csproj all
 
 # Clone Repositories
 git clone git@github.com:matkoch/resharper-plugins ~/code/resharper-plugins
-git clone git@github.com:nuke-build/nuke ~/code/nuke
 git clone git@github.com:matkoch/matkoch.github.io ~/code/blog
-git clone https
+git clone git@github.com:matkoch/thumbnail-generator ~/code/thumbnail-generator
+git clone git@github.com:nuke-build/nuke ~/code/nuke
 dotnet tool install nuke.globaltool --global
 cd ~/code/nuke;              nuke generate-global-solution
 cd ~/code/resharper-plugins; nuke generate-global-solution

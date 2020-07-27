@@ -54,6 +54,11 @@ window.Lazyload.js(SOURCES.jquery, function() {
   }
 </style>
 
+***TL;DR: ***
+
+- Integrating with MSBuild is inevitable
+- Some hurdles for creating NuGet package
+
 <!-- TODO: or even right from the start -->
 At some point, much of the tooling around .NET projects ends up having to integrate with MSBuild, the _low-level_ build system in the .NET ecosystem. Examples of these tools are:
 
@@ -203,8 +208,7 @@ In the `.props` file, we're defining a property `CustomTasksDirectory` that poin
 Note that we add a condition to check if `EnableCustomTasks` is enabled (Line 9). This little trick allows us to **easily opt-out from attaching the task**. Faulty MSBuild tasks have a high chance to completely break a referencing project and to cause confusion about where the error originates from:
 
 <div class="tweet" tweetID="1072394313592647684">I really try to like @JetBrainsRider - but I just don’t have enough time for it...</div>
-
-Before we can finally pack our package, we need to run `dotnet publish` on the tasks project for both target frameworks:
+  pack our package, we need to run `dotnet publish` on the tasks project for both target frameworks:
 
 {% highlight batch linenos %}
 dotnet publish --framework netcoreapp2.1
@@ -228,29 +232,17 @@ On pitfall for me was that loading the MSBuild task is not subject to [NuGet's s
 
 ## Debugging a Task
 
-Let's get to the most interesting part of how we can **effectively debug the implementation** of our MSBuild task:
+Let's get to the most interesting part of how we can **effectively debug MSBuild integration** in a test project:
 
 <div class="tweet" tweetID="1183638078767927297">Is there a decent workflow for writing MSBuild tasks? Finally looking at adding a proper MSBuild task to FunctionMonkey (it currently uses a console app - that'll stay too). Writing it seems straightforward.... debugging it looks like it might be painful.</div>
 
 Indeed, with the **console application approach**, things are rather easy. <!-- TODO: INPUT DATA --> On Windows we can call `System.Diagnostics.Debugger.Launch()`, which **fires up the Just-In-Time Debugger** so that we can attach to the process. By default, this will use the [Visual Studio JIT Debugger](https://docs.microsoft.com/en-us/visualstudio/debugger/debug-using-the-just-in-time-debugger?view=vs-2019), but we can also [configure JetBrains Rider as the Just-In-Time Debugger](https://blog.jetbrains.com/dotnet/2019/04/16/edit-continue-just-time-debugging-debugger-improvements-rider-2019-1/). As of now, this strategy is [not supported on Linux/macOS](https://github.com/dotnet/runtime/issues/38427). The best workaround I've found is to call `SpinWait.SpinUntil(() => Debugger.IsAttached)`, which will wait until the debugger is actually attached. This also has the benefit that we don't break on the `Debugger.Launch` statement.
 
-Taking the **custom MSBuild task way**, we have a bit more footwork to do. In contrast to using `PackageReference` with the final package, the`.targets` and `.props` files **aren't automatically imported** when using a `ProjectReference`. We could create an actual package, but that has the unpleasant side-effect of getting persisted in our global NuGet cache:
+Taking the **custom MSBuild task approach**, we have a bit more footwork to do. In contrast to using `PackageReference`, the`.targets` and `.props` files **aren't automatically imported** when using a `ProjectReference` in another test project. We could create an actual package, but that has the unpleasant side-effect of getting persisted in our global NuGet cache:
 
 <div class="tweet" tweetID="965325828455321600">I want to point to to a nupckg file directly ideally. The problem with local feeds is that packages get cached.</div>
 
-Deleting from the cache, or incrementing versions – all those are rather poor workarounds compared to a possible [better development and testing experience](https://github.com/NuGet/Home/issues/6579) for NuGet packages. So lets dismiss this idea.
-
-As a first step to enable first-class debugging, we will call `dotnet publish --framework netcoreapp2.1` to **publish the MSBuildTasks project**. When using JetBrains Rider, the most efficient way is to create a [run configuration](https://www.jetbrains.com/help/rider/Run_Debug_Configuration.html):
-
-![Publishing MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-publish.png){:width="750px" .shadow}
-
-In the second step, we call `MSBuild.dll /t:Clean;Restore;Pack /p:NukeMSBuildIntegration=True` to **invoke MSBuild on the project** that we want to test our MSBuild task with:
-
-![Running MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-run.png){:width="750px" .shadow}
-
-![Running MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-list.png){:width="750px" .shadow}
-
-Manually reference props/targets files, as they won't be imported when referencing as ProjectReference. Packing each time is also possible, but cumbersome:
+Deleting from the cache, or incrementing versions – all those are rather poor workarounds compared to a possible [better development and testing experience](https://github.com/NuGet/Home/issues/6579) for NuGet packages. A better alternative is to **manually wire up our test project**:
 
 {% highlight xml linenos %}
 <Project Sdk="Microsoft.NET.Sdk">
@@ -273,6 +265,26 @@ Manually reference props/targets files, as they won't be imported when referenci
 </Project>
 {% endhighlight %}
 
+The **`.props` file should be imported at the very beginning** of the project file (Line 3), allowing to set default property values. Meanwhile, the **`.targets` file should be important at the very end** of the project file (Line 16), to ensure the task is run with the relevant input values. Here, we will also utilize our trick from the previous section, and set a default for `EnableCustomTasks` (Line 8), which can either be overridden from the outside (hence the condition) or manually changed to **test behavior in the IDE**. We should also not forget about adjusting the `CustomTasksDirectory` property to **point to the local version** of our task.
+
+With [JetBrains Rider](https://jetbrains.com/rider) we can use [run configurations](https://www.jetbrains.com/help/rider/Run_Debug_Configuration.html) to make this process more convenient. In the first configuration `Publish CustomTasks`, we will **publish the MSBuild task project**:
+
+![Publishing MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-publish.png){:width="750px" .shadow}
+
+In a second configuration `Run CustomTasks` we will depend on the first one, and also call `MSBuild.dll /t:Clean;Restore;Pack /p:NukeMSBuildIntegration=True` to **invoke MSBuild on the test project**:
+
+![Running MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-run.png){:width="750px" .shadow}
+
+Note that this is the place when we need to override the `EnableCustomTasks` property to execute our task. Also we should **make an educated choice of which targets should be invoked**. If our task integrates with the `Restore` target, then we really need to execute `Clean` before, because otherwise it may be skipped for consecutive builds.
+
+Now that we're all set up, we can use the `Run CustomTasks` configuration to finally debug our task implementation:
+
+![Running MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-list.png){:width="750px" .shadow}
+
+## Troubleshooting MSBuild
+
+Sooner or later we will run into issues with our MSBuild integration, especially regarding the `.props` and `.targets` files. We might reference a wrong property, forget about escaping, or just have a typo in our identifiers. The _Project Properties_ dialog is a good place to start investigations and to see **evaluated properties and imports** for a project file:
+
 <div class="swiper swiper-demo swiper-demo--image" style="max-width: 550px">
   <div class="swiper__wrapper">
     <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/project-properties.png"/></div>
@@ -282,10 +294,27 @@ Manually reference props/targets files, as they won't be imported when referenci
   <div class="swiper__button swiper__button--next fas fa-chevron-right"></div>
 </div>
 
+Using the common keyboard shortcut, we can also easily **copy values from grid cells**. If we need even more insight, then the [MSBuild Structured Log Viewer](https://msbuildlog.com/) created by [Kirill Osenkov](https://twitter.com/KirillOsenkov) can be of great help:
+
+<div class="tweet" tweetID="1284026601416654848">2 years ago I rewrote our entire build pipeline in mostly msbuild. Once I learned about structured log viewer my estimations were cut in half. MSBuild has become a lot more of a regular programming task since then.</div>
+
+The Structured Log Viewer operates on [binary log files](https://docs.microsoft.com/visualstudio/msbuild/obtaining-build-logs-with-msbuild#save-a-binary-log), which can be created by passing `/binaryLogger:output.binlog` to the MSBuild invocation. Binary log files provide the **highest level of completeness and verbosity**, even compared to most-diagnostic level for text logs. Imports of files and execution of targets are **hierarchically visualized using a tree view**. Particularly when looking for a suitable target to integrate our own using `BeforeTargets` or `AfterTargets`, we can also view the [flattened temporal order view](https://twitter.com/KirillOsenkov/status/1192209843630665728).
+
+<div class="tweet" tweetID="1192209843630665728">The latest MSBuild Log Viewer adds a new option to display targets in one flat list chronologically, it may be easier to see in which order the targets actually ran:</div>
+
+Another benefit is that when testing our task on large projects that imply a time-consuming compilation, we can **replay a single task** without executing all its dependencies:
+
+<div class="tweet" tweetID="1030638751951638529">Soon in MSBuild Structured Log Viewer: run or debug MSBuild tasks by using the exact parameter values from the binlog! "Replay" tasks in isolation outside of the build.</div>
+
+TODO: Rider
+
+## Conclusion
+
+
 
 ## Acknowledgements
 
-I want to add that much of my adventures with MSBuild are only of good nature and happy endings because [Martin Ullrich](https://twitter.com/dasmulli) is such a great source of knowledge:
+I want to add that much of my adventures with MSBuild are only of good nature and happy endings because my friend [Martin Ullrich](https://twitter.com/dasmulli) is such a great source of knowledge:
 
 <div class="tweet" tweetID="1189873542906683392">I think everyone should have a @dasmulli to effectively work with #msbuild. Thank you so much Martin! 👏🏻</div>
 
