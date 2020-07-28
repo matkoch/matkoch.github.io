@@ -12,6 +12,7 @@ declare -a brew_install_fonts=(
     "font-source-code-pro"
     "font-source-sans-pro"
     "font-ubuntu"
+    "font-meslolg-nerd-font"
 )
 brew tap homebrew/cask-fonts
 for i in "${brew_install_fonts[@]}"; do brew cask install $i; done
