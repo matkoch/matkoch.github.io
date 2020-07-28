@@ -3,13 +3,16 @@ Setting up macOS for .NET Development
 
 #!/usr/bin/env bash
 
-# Install Homebrew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-
 # Install ZSH
 /bin/bash -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
+# Install Powerlevel10k // https://github.com/romkatv/powerlevel10k
+brew install romkatv/powerlevel10k/powerlevel10k
+echo 'source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme' >>! ~/.zshrc
+
 # Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
 declare -a brew_install=(
     "git"
     "svn"
@@ -54,7 +57,8 @@ declare -a brew_cask_install=(
     "enpass"
     "bettertouchtool"
     "grammarly"
-    "pock avibrazil-rdm"
+    "pock"
+    "avibrazil-rdm"
     "dropbox"
     "turbo-boost-switcher"
 
@@ -72,7 +76,7 @@ declare -a brew_cask_install=(
     "streamlabs-obs"
 )
 for i in "${brew_install[@]}"; do brew install $i; done
-for i in "${brew_cask_install[@]}"; do brew install $i; done
+for i in "${brew_cask_install[@]}"; do brew cask install $i; done
 
 # Generate SSH Key // https://github.com/settings/keys
 git config --global user.name "Matthias Koch"
@@ -130,6 +134,7 @@ git clone git@github.com:matkoch/matkoch.github.io ~/code/blog
 git clone git@github.com:matkoch/thumbnail-generator ~/code/thumbnail-generator
 git clone git@github.com:nuke-build/nuke ~/code/nuke
 dotnet tool install nuke.globaltool --global
+echo 'export PATH=$HOME/.dotnet/tools:$PATH' >> ~/.zshrc
 cd ~/code/nuke;              nuke generate-global-solution
 cd ~/code/resharper-plugins; nuke generate-global-solution
 
@@ -139,10 +144,6 @@ cd ~/code/resharper-plugins; nuke generate-global-solution
 # https://medium.com/@gveloper/using-iterm2s-built-in-integration-with-tmux-d5d0ef55ec30
 # mas install 1254981365 # Contrast
 # https://zellwk.com/blog/mac-setup-2/
-
-# Install Powerlevel10k // https://github.com/romkatv/powerlevel10k
-brew install romkatv/powerlevel10k/powerlevel10k
-echo 'source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme' >>! ~/.zshrc
 
 # Disable SIP
 echo "Reboot, hold ⌘+R, open terminal and type: csrutil disable"
