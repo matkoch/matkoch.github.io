@@ -1,6 +1,6 @@
 Setting up macOS for .NET Development
 
-
+```
 #!/usr/bin/env bash
 
 # Install ZSH
@@ -147,4 +147,4 @@ cd ~/code/resharper-plugins; nuke generate-global-solution
 
 # Disable SIP
 echo "Reboot, hold ⌘+R, open terminal and type: csrutil disable"
-
+```
