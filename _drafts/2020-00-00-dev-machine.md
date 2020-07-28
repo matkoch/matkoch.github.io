@@ -1,4 +1,4 @@
-# Setting up macOS for .NET Development
+# Setup macOS environment
 
 ## Homebrew
 
@@ -15,33 +15,39 @@
 brew install romkatv/powerlevel10k/powerlevel10k
 echo 'source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme' >>! ~/.zshrc
 
-brew cask install iterm2
-brew install git svn
-
 # https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
 brew tap homebrew/cask-fonts
-for font in \
-    font-open-sans \
-    font-roboto \
-    font-meslolg-nerd-font
-do
-    brew cask install $font
-done
+brew cask install font-roboto
+brew cask install font-cascadia
+brew cask install font-fira-code
+brew cask install font-source-code-pro
+brew cask install font-firacode-nerd-font
+brew cask install font-sourcecodepro-nerd-font
+brew cask install font-meslolg-nerd-font
 
 p10k configure
+brew cask install iterm2
+
+brew install git
+brew install svn
+brew install tmux              # https://github.com/tmux/tmux/wiki
+brew install tree              # https://github.com/dbazile/gnu-tree-macos
+brew install htop              # https://hisham.hm/htop/
+brew install ncdu              # https://dev.yorhel.nl/ncdu
+brew install task              # https://taskwarrior.org/
+brew install speedtest-cli     # https://github.com/sivel/speedtest-cli
+brew install duti              # https://github.com/moretension/duti/
+brew install mas               # https://github.com/mas-cli/mas
+brew install dockutil
 ```
 
 ## Browser
 
 ```
-for browser in \
-    firefox \
-    google-chrome \
-    brave-browser \
-    microsoft-edge
-do
-    brew cask install $browser
-done
+brew cask install firefox
+brew cask install google-chrome
+brew cask install brave-browser
+brew cask install microsoft-edge
 
 default_browser="com.google.Chrome"
 #default_browser = "com.mozilla.firefox"
@@ -52,91 +58,46 @@ duti -s ${default_browser} http all
 duti -s ${default_browser} https all
 ```
 
-## Tools
+## Productivity
 
 ```
-declare -a brew_cask_install=(
-    # Development Tools
-    "dotnet-sdk"
-    "jetbrains-toolbox"
-    "iterm2"
-    "docker"
-    "visual-studio-code"
+# Remove all docked apps
+dockutil --remove all
 
-    # Connection
-    "royal-tsx"
-    "tunnelblick"
-    "tripmode"
+# Update computer name
+sudo scutil --set ComputerName "dawg"
+sudo scutil --set HostName "dawg"
+sudo scutil --set LocalHostName "dawg"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName $(scutil --get LocalHostName)
 
-    # Social
-    "ferdi"                     # https://getferdi.com/
-    "slack"
-    "skype"
-    "telegram"
-
-    # Productivity Tools
-    "alfred"
-    "bartender"
-    "taskwarrior-pomodoro"
-    "enpass"
-    "bettertouchtool"
-    "grammarly"
-    "pock"
-    "avibrazil-rdm"
-    "dropbox"
-    "turbo-boost-switcher"
-
-    # Media Tools
-    "spotify"
-    "gimp"
-    "vlc"
-    "camtasia"
-    "snagit"
-
-    # Streaming
-    "obs"
-    "obs-virtualcam"
-    "loopback"
-    "streamlabs-obs"
-)
-for i in "${brew_cask_install[@]}"; do brew cask install $i; done
-```
-
-
-
-# Install Java
-
-```
-brew tap adoptopenjdk/openjdk
-brew cask install adoptopenjdk8
-```
-
-
-
-# Setup VS Code
-
-```
-code --install-extension ms-dotnettools.csharp
-code --install-extension cssho.vscode-svgviewer
-```
-
-# Settings?
-
-```
+# Configure Finder
+defaults write com.apple.finder CreateDesktop false
 defaults write com.apple.finder AppleShowAllFiles YES
 defaults write com.apple.finder ShowPathbar -bool true
 defaults write com.apple.finder ShowStatusBar -bool true
-sudo spctl --master-disable
-#sudo firmwarepasswd -setpasswd # https://github.com/T0mmykn1fe/DevSecOps-OSX-Mac-Setup-with-Homebrew
+killall Finder
+
+sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText "l33t!"
+
+brew cask install enpass
+brew cask install alfred
+brew cask install bartender
+brew cask install bettertouchtool
+brew cask install avibrazil-rdm
+brew cask install ferdi
+brew cask install spotify
 ```
 
-# Setup Default Apps (http://seriot.ch/resources/utis_graph/utis_graph.pdf)
+## Development
 
 ```
+brew cask install jetbrains-toolbox
+brew cask install visual-studio-code
+
+# http://seriot.ch/resources/utis_graph/utis_graph.pdf
 duti -s com.microsoft.VSCode public.plain-text all
 duti -s com.microsoft.VSCode public.unix-executable all
 duti -s com.microsoft.VSCode public.data all
-
 duti -s com.microsoft.VSCode .dotsettings all
 duti -s com.microsoft.VSCode .targets all
 duti -s com.microsoft.VSCode .props all
@@ -144,43 +105,63 @@ duti -s com.microsoft.VSCode .dotsettings all
 duti -s com.microsoft.VSCode .cs all
 duti -s com.microsoft.VSCode .csproj all
 
-#duti -s com.apple.Safari public.html all
-#$(osascript -e 'id of app "Visual Studio Code"')
+code --install-extension ms-dotnettools.csharp
+code --install-extension cssho.vscode-svgviewer
+
+brew cask install dotnet-sdk
+echo 'export PATH=$HOME/.dotnet/tools:$PATH' >> ~/.zshrc
+dotnet tool install nuke.globaltool --global
+dotnet tool install installsdkglobaltool --global
+dotnet tool install dnt --global
+
+brew cask install docker
+brew install mono
+
+brew tap adoptopenjdk/openjdk
+brew cask install adoptopenjdk8
 ```
 
-# Clone Repositories
+## Repositories
 
 ```
 git clone git@github.com:matkoch/resharper-plugins ~/code/resharper-plugins
 git clone git@github.com:matkoch/matkoch.github.io ~/code/blog
 git clone git@github.com:matkoch/thumbnail-generator ~/code/thumbnail-generator
 git clone git@github.com:nuke-build/nuke ~/code/nuke
-dotnet tool install nuke.globaltool --global
-echo 'export PATH=$HOME/.dotnet/tools:$PATH' >> ~/.zshrc
 cd ~/code/nuke;              nuke generate-global-solution
 cd ~/code/resharper-plugins; nuke generate-global-solution
 ```
 
+## Other Tools
 
-# https://gist.github.com/squarism/ae3613daf5c01a98ba3a
-# https://medium.com/@gveloper/using-iterm2s-built-in-integration-with-tmux-d5d0ef55ec30
-# mas install 1254981365 # Contrast
-# https://zellwk.com/blog/mac-setup-2/
+```
+brew cask install dropbox
+brew cask install taskwarrior-pomodoro
+brew cask install grammarly
+brew cask install tunnelblick
+brew cask install tripmode
+brew cask install royal-tsx
 
-# Disable SIP
-echo "Reboot, hold ⌘+R, open terminal and type: csrutil disable"
+brew cask install camtasia
+brew cask install snagit
+brew cask install gimp
+brew cask install vlc
+brew install imagemagick
+
+brew cask install slack
+brew cask install skype
+brew cask install telegram
+
+brew cask install obs
+brew cask install obs-virtualcam
+brew cask install loopback
+brew cask install streamlabs-obs
 ```
 
 
 
-    "mono"
-    "tmux"              # https://github.com/tmux/tmux/wiki
-    "imagemagick"       # https://imagemagick.org/index.php
-    "tree"              # https://github.com/dbazile/gnu-tree-macos
-    "htop"              # https://hisham.hm/htop/
-    "ncdu"              # https://dev.yorhel.nl/ncdu
-    "task"              # https://taskwarrior.org/
-    "speedtest-cli"     # https://github.com/sivel/speedtest-cli
-    "duti"              # https://github.com/moretension/duti/
-    "mas"               # https://github.com/mas-cli/mas
-    "dockutil"
+- https://gist.github.com/squarism/ae3613daf5c01a98ba3a
+- https://medium.com/@gveloper/using-iterm2s-built-in-integration-with-tmux-d5d0ef55ec30
+- mas install 1254981365 # Contrast
+- https://zellwk.com/blog/mac-setup-2/
+- echo "Reboot, hold ⌘+R, open terminal and type: csrutil disable"
