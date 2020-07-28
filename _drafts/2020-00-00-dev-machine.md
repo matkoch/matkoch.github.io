@@ -75,6 +75,8 @@ for i in "${brew_install[@]}"; do brew install $i; done
 for i in "${brew_cask_install[@]}"; do brew install $i; done
 
 # Generate SSH Key // https://github.com/settings/keys
+git config --global user.name "Matthias Koch"
+git config --global user.email "ithrowexceptions@gmail.com"
 ssh-keygen -t rsa -b 4096 -C "ithrowexceptions@gmail.com"
 eval "$(ssh-agent -s)"
 #touch ~/.ssh/config
@@ -99,6 +101,13 @@ for i in "${brew_install_fonts[@]}"; do brew cask install $i; done
 # Setup VS Code
 code --install-extension ms-dotnettools.csharp
 code --install-extension cssho.vscode-svgviewer
+
+# Settings
+defaults write com.apple.finder AppleShowAllFiles YES
+defaults write com.apple.finder ShowPathbar -bool true
+defaults write com.apple.finder ShowStatusBar -bool true
+sudo spctl --master-disable
+#sudo firmwarepasswd -setpasswd # https://github.com/T0mmykn1fe/DevSecOps-OSX-Mac-Setup-with-Homebrew
 
 # Default Apps (http://seriot.ch/resources/utis_graph/utis_graph.pdf)
 duti -s com.microsoft.VSCode public.plain-text all
@@ -129,9 +138,12 @@ cd ~/code/resharper-plugins; nuke generate-global-solution
 # https://gist.github.com/squarism/ae3613daf5c01a98ba3a
 # https://medium.com/@gveloper/using-iterm2s-built-in-integration-with-tmux-d5d0ef55ec30
 # mas install 1254981365 # Contrast
+# https://zellwk.com/blog/mac-setup-2/
 
 # Install Powerlevel10k // https://github.com/romkatv/powerlevel10k
 brew install romkatv/powerlevel10k/powerlevel10k
 echo 'source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme' >>! ~/.zshrc
 
+# Disable SIP
+echo "Reboot, hold ⌘+R, open terminal and type: csrutil disable"
 
