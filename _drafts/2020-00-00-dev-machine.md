@@ -1,4 +1,21 @@
-Setting up macOS for .NET Development
+# Setting up macOS for .NET Development
+
+## Homebrew
+
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+# Fonts: https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
+declare -a brew_install_fonts=(
+    "font-open-sans"
+    "font-roboto"
+    "font-source-code-pro"
+    "font-source-sans-pro"
+    "font-ubuntu"
+)
+brew tap homebrew/cask-fonts
+for i in "${brew_install_fonts[@]}"; do brew cask install $i; done
+```
 
 ```
 #!/usr/bin/env bash
@@ -11,7 +28,6 @@ brew install romkatv/powerlevel10k/powerlevel10k
 echo 'source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme' >>! ~/.zshrc
 
 # Homebrew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 declare -a brew_install=(
     "git"
@@ -77,8 +93,11 @@ declare -a brew_cask_install=(
 )
 for i in "${brew_install[@]}"; do brew install $i; done
 for i in "${brew_cask_install[@]}"; do brew cask install $i; done
+```
 
-# Generate SSH Key // https://github.com/settings/keys
+# Generate SSH Key https://github.com/settings/keys
+
+```
 git config --global user.name "Matthias Koch"
 git config --global user.email "ithrowexceptions@gmail.com"
 ssh-keygen -t rsa -b 4096 -C "ithrowexceptions@gmail.com"
@@ -86,34 +105,37 @@ eval "$(ssh-agent -s)"
 #touch ~/.ssh/config
 ssh-add -K ~/.ssh/id_rsa
 pbcopy < ~/.ssh/id_rsa.pub
+```
 
 # Install Java
+
+```
 brew tap adoptopenjdk/openjdk
 brew cask install adoptopenjdk8
+```
 
-# Install Fonts // https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
-declare -a brew_install_fonts=(
-    "font-open-sans"
-    "font-roboto"
-    "font-source-code-pro"
-    "font-source-sans-pro"
-    "font-ubuntu"
-)
-brew tap homebrew/cask-fonts
-for i in "${brew_install_fonts[@]}"; do brew cask install $i; done
+
 
 # Setup VS Code
+
+```
 code --install-extension ms-dotnettools.csharp
 code --install-extension cssho.vscode-svgviewer
+```
 
-# Settings
+# Settings?
+
+```
 defaults write com.apple.finder AppleShowAllFiles YES
 defaults write com.apple.finder ShowPathbar -bool true
 defaults write com.apple.finder ShowStatusBar -bool true
 sudo spctl --master-disable
 #sudo firmwarepasswd -setpasswd # https://github.com/T0mmykn1fe/DevSecOps-OSX-Mac-Setup-with-Homebrew
+```
 
-# Default Apps (http://seriot.ch/resources/utis_graph/utis_graph.pdf)
+# Setup Default Apps (http://seriot.ch/resources/utis_graph/utis_graph.pdf)
+
+```
 duti -s com.microsoft.VSCode public.plain-text all
 duti -s com.microsoft.VSCode public.unix-executable all
 duti -s com.microsoft.VSCode public.data all
@@ -127,8 +149,11 @@ duti -s com.microsoft.VSCode .csproj all
 
 #duti -s com.apple.Safari public.html all
 #$(osascript -e 'id of app "Visual Studio Code"')
+```
 
 # Clone Repositories
+
+```
 git clone git@github.com:matkoch/resharper-plugins ~/code/resharper-plugins
 git clone git@github.com:matkoch/matkoch.github.io ~/code/blog
 git clone git@github.com:matkoch/thumbnail-generator ~/code/thumbnail-generator
@@ -137,7 +162,7 @@ dotnet tool install nuke.globaltool --global
 echo 'export PATH=$HOME/.dotnet/tools:$PATH' >> ~/.zshrc
 cd ~/code/nuke;              nuke generate-global-solution
 cd ~/code/resharper-plugins; nuke generate-global-solution
-
+```
 
 
 # https://gist.github.com/squarism/ae3613daf5c01a98ba3a
