@@ -306,7 +306,7 @@ Another benefit is that when testing our task on large projects that imply a tim
 
 <div class="tweet" tweetID="1030638751951638529">Soon in MSBuild Structured Log Viewer: run or debug MSBuild tasks by using the exact parameter values from the binlog! "Replay" tasks in isolation outside of the build.</div>
 
-TODO: Rider
+For developers on Windows there is a **special surprise in JetBrains Rider**! Try right-clicking the test project, and choose _Advanced Build Actions  
 
 ## Conclusion
 
