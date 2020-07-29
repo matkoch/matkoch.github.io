@@ -82,11 +82,18 @@ sudo scutil --set HostName "dawg"
 sudo scutil --set LocalHostName "dawg"
 sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName $(scutil --get LocalHostName)
 
-# Configure Finder
+# Configure environment
 defaults write com.apple.finder CreateDesktop false
 defaults write com.apple.finder AppleShowAllFiles YES
 defaults write com.apple.finder ShowPathbar -bool true
 defaults write com.apple.finder ShowStatusBar -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+defaults write com.apple.menuextra.battery ShowPercent -string "YES"
+defaults write com.apple.menuextra.battery ShowTime -string "YES"
+defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+defaults write com.apple.dock mru-spaces -bool false # Spaces rearrange
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+defaults write /Library/Preferences/com.apple.security GKAutoRearm -bool false # https://www.defaults-write.com/disable-gatekeeper-on-your-mac/#more-1305
 killall Finder
 
 sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText "l33t!"
@@ -183,3 +190,6 @@ brew cask install streamlabs-obs
 - mas install 1254981365 # Contrast
 - https://zellwk.com/blog/mac-setup-2/
 - echo "Reboot, hold ⌘+R, open terminal and type: csrutil disable"
+- https://apple.stackexchange.com/questions/382098/how-to-enable-tap-to-click-using-keyboard-only
+- http://www.defaults-write.com/
+- https://marketmix.com/de/mac-osx-umfassende-liste-der-terminal-defaults-commands/
