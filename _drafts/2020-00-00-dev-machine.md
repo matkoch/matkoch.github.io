@@ -87,13 +87,15 @@ defaults write com.apple.finder CreateDesktop false
 defaults write com.apple.finder AppleShowAllFiles YES
 defaults write com.apple.finder ShowPathbar -bool true
 defaults write com.apple.finder ShowStatusBar -bool true
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-defaults write com.apple.menuextra.battery ShowPercent -string "YES"
-defaults write com.apple.menuextra.battery ShowTime -string "YES"
+defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+
 defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+#defaults write com.apple.menuextra.battery ShowPercent -string "YES"
+#defaults write com.apple.menuextra.battery ShowTime -string "YES"
 defaults write com.apple.dock mru-spaces -bool false # Spaces rearrange
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-defaults write /Library/Preferences/com.apple.security GKAutoRearm -bool false # https://www.defaults-write.com/disable-gatekeeper-on-your-mac/#more-1305
+#defaults write /Library/Preferences/com.apple.security GKAutoRearm -bool false # https://www.defaults-write.com/disable-gatekeeper-on-your-mac/#more-1305
 killall Finder
 
 sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText "l33t!"
