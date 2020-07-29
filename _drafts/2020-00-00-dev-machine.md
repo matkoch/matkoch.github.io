@@ -9,25 +9,6 @@
 ## Terminal
 
 ```
-/bin/bash -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-# https://github.com/romkatv/powerlevel10k
-brew install romkatv/powerlevel10k/powerlevel10k
-echo 'source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme' >>! ~/.zshrc
-
-# https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
-brew tap homebrew/cask-fonts
-brew cask install font-roboto
-brew cask install font-cascadia
-brew cask install font-fira-code
-brew cask install font-source-code-pro
-brew cask install font-firacode-nerd-font
-brew cask install font-sourcecodepro-nerd-font
-brew cask install font-meslolg-nerd-font
-
-p10k configure
-brew cask install iterm2
-
 brew install git
 brew install svn
 brew install tmux                 # https://github.com/tmux/tmux/wiki
@@ -40,6 +21,23 @@ brew install duti                 # https://github.com/moretension/duti/
 brew install mas                  # https://github.com/mas-cli/mas
 brew install dockutil
 brew install the_silver_searcher  # https://github.com/ggreer/the_silver_searcher
+
+# https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
+brew tap homebrew/cask-fonts
+brew cask install font-roboto
+brew cask install font-cascadia
+brew cask install font-fira-code
+brew cask install font-source-code-pro
+brew cask install font-firacode-nerd-font
+brew cask install font-sourcecodepro-nerd-font
+brew cask install font-meslolg-nerd-font
+
+# https://github.com/romkatv/powerlevel10k
+brew cask install iterm2
+/bin/bash -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+brew install romkatv/powerlevel10k/powerlevel10k
+echo 'source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme' >>! ~/.zshrc
+p10k configure
 ```
 
 ## SSH Key
