@@ -30,15 +30,29 @@ brew cask install iterm2
 
 brew install git
 brew install svn
-brew install tmux              # https://github.com/tmux/tmux/wiki
-brew install tree              # https://github.com/dbazile/gnu-tree-macos
-brew install htop              # https://hisham.hm/htop/
-brew install ncdu              # https://dev.yorhel.nl/ncdu
-brew install task              # https://taskwarrior.org/
-brew install speedtest-cli     # https://github.com/sivel/speedtest-cli
-brew install duti              # https://github.com/moretension/duti/
-brew install mas               # https://github.com/mas-cli/mas
+brew install tmux                 # https://github.com/tmux/tmux/wiki
+brew install tree                 # https://github.com/dbazile/gnu-tree-macos
+brew install htop                 # https://hisham.hm/htop/
+brew install ncdu                 # https://dev.yorhel.nl/ncdu
+brew install task                 # https://taskwarrior.org/
+brew install speedtest-cli        # https://github.com/sivel/speedtest-cli
+brew install duti                 # https://github.com/moretension/duti/
+brew install mas                  # https://github.com/mas-cli/mas
 brew install dockutil
+brew install the_silver_searcher  # https://github.com/ggreer/the_silver_searcher
+```
+
+## SSH Key
+
+```
+git config --global user.name "Matthias Koch"
+git config --global user.email "ithrowexceptions@gmail.com"
+ssh-keygen -t rsa -b 4096 -C "ithrowexceptions@gmail.com"
+eval "$(ssh-agent -s)"
+#touch ~/.ssh/config
+ssh-add -K ~/.ssh/id_rsa
+pbcopy < ~/.ssh/id_rsa.pub
+echo Paste key on https://github.com/settings/keys and https://jetbrains.team/m/Matthias.Koch/git
 ```
 
 ## Browser
@@ -135,6 +149,12 @@ cd ~/code/resharper-plugins; nuke generate-global-solution
 ## Other Tools
 
 ```
+# mas install 975937182 # Fantastical - Calendar & Tasks
+mas install 488764545    # The Clock
+mas install 1056643111   # Clocker
+mas install 1444383602   # GoodNotes 5
+
+brew cask install fantastical
 brew cask install dropbox
 brew cask install taskwarrior-pomodoro
 brew cask install grammarly
