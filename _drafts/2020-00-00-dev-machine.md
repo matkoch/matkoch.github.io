@@ -61,11 +61,13 @@ brew cask install google-chrome
 brew cask install brave-browser
 brew cask install microsoft-edge
 
-default_browser="com.google.Chrome"
-#default_browser = "com.mozilla.firefox"
+default_browser="com.mozilla.firefox"
+#default_browser = "com.google.Chrome"
 #default_browser = "com.brave.Browser"
 #default_browser = "com.microsoft.edgemac"
 
+duti -s ${default_browser} public.html all
+duti -s ${default_browser} public.xhtml all
 duti -s ${default_browser} http all
 duti -s ${default_browser} https all
 ```
