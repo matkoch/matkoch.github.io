@@ -127,6 +127,8 @@ duti -s com.microsoft.VSCode .props all
 duti -s com.microsoft.VSCode .dotsettings all
 duti -s com.microsoft.VSCode .cs all
 duti -s com.microsoft.VSCode .csproj all
+duti -s com.microsoft.VSCode .nuspec all
+# .nupkg ?
 
 code --install-extension ms-dotnettools.csharp
 code --install-extension cssho.vscode-svgviewer
