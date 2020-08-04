@@ -282,7 +282,7 @@ Now that we're all set up, we can use the `Run CustomTasks` configuration to fin
 
 Sooner or later we will run into issues with our MSBuild integration, especially regarding the `.props` and `.targets` files. We might reference a wrong property, forget about escaping, or just have a typo in our identifiers. The _Project Properties_ dialog is a good place to start investigations and to see **evaluated properties and imports** for a project file:
 
-<div class="swiper swiper-demo swiper-demo--image" style="max-width: 600px">
+<div class="swiper swiper-demo swiper-demo--image" style="max-width: 650px">
   <div class="swiper__wrapper">
     <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-08-04-implementing-and-debugging-custom-msbuild-tasks/project-properties.png"/></div>
     <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-08-04-implementing-and-debugging-custom-msbuild-tasks/project-imports.png"/></div>
@@ -311,9 +311,5 @@ Given that Structured Log Viewer can already run on [Avalonia UI](https://github
 
 ## Acknowledgements
 
-I want to add that much of my adventures with MSBuild are only of good nature and happy endings because my friend [Martin Ullrich](https://twitter.com/dasmulli) is such a great source of knowledge:
-
-<div class="tweet" tweetID="1189873542906683392">I think everyone should have a @dasmulli to effectively work with #msbuild. Thank you so much Martin! 👏🏻</div>
-
-If you don't follow him yet, you really should. And sorry to Martin for sending more MSBuild enthusiasts your way! 🤗
+I want to add that much of my adventures with MSBuild are only of good nature and happy endings because my friend [Martin Ullrich](https://twitter.com/dasmulli) is such an **MSBuild wizard**. If you don't follow him yet, you really should. And sorry Martin for sending more MSBuild enthusiasts your way! 🤗
 
