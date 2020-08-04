@@ -200,12 +200,11 @@ In the `.props` file, we're defining a property `CustomTasksDirectory` that poin
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="$(CustomTasksDirectory)\CustomTasks.targets" Condition="'$(EnableCustomTasks)' != 'False'" />
-
+  <Import Project="$(CustomTasksDirectory)\CustomTasks.targets" Condition="'$(CustomTasksEnabled)' != 'False'" />
 </Project>
 {% endhighlight %}
 
-Note that we add a condition to check if `EnableCustomTasks` is enabled (Line 9). This little trick allows us to **easily opt-out from attaching the task**. Faulty MSBuild tasks have a high chance to completely break a referencing project and to cause confusion about where the error originates from:
+Note that we add a condition to check if `CustomTasksEnabled` is enabled (Line 9). This little trick allows us to **easily opt-out from attaching the task**. Faulty MSBuild tasks have a high chance to completely break a referencing project and to cause confusion about where the error originates from:
 
 <div class="tweet" tweetID="1072394313592647684">I really try to like @JetBrainsRider - but I just don’t have enough time for it...</div>
   pack our package, we need to run `dotnet publish` on the tasks project for both target frameworks:
@@ -252,8 +251,9 @@ Deleting from the cache, or incrementing versions – all those are rather poor 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <OutputType>Exe</OutputType>
-    <EnableCustomTasks Condition="'$(EnableCustomTasks)' == ''">False</EnableCustomTasks>
-    <CustomTasksDirectory>$(MSBuildThisFileDirectory)\..\CustomTasks\bin\Debug\netcoreapp2.1\publish</CustomTasksDirectory>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <CustomTasksEnabled Condition="'$(CustomTasksEnabled)' == ''">False</CustomTasksEnabled>
+    <CustomTasksDirectory>$(MSBuildThisFileDirectory)\..\source\Nuke.MSBuildTasks\bin\Debug\netcoreapp2.1\publish</CustomTasksDirectory>
   </PropertyGroup>
 
   <ItemGroup>
