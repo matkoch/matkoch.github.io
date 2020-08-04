@@ -311,5 +311,5 @@ Given that Structured Log Viewer can already run on [Avalonia UI](https://github
 
 ## Acknowledgements
 
-I want to add that much of my adventures with MSBuild are only of good nature and happy endings because my friend [Martin Ullrich](https://twitter.com/dasmulli) is such an **MSBuild wizard**. If you don't follow him yet, you really should. And sorry Martin for sending more MSBuild enthusiasts your way! 🤗
+I want to add that much of my adventures with MSBuild are only of good nature and happy endings because my friend [Martin Ullrich](https://twitter.com/dasmulli) is such an **MSBuild wizard**. If you don't follow him yet, you really should. Sorry Martin for sending more MSBuild enthusiasts your way! 🤗
 
