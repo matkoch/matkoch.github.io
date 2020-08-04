@@ -14,8 +14,8 @@ article_header:
   background_color: '#203028'
   background_image:
     gradient: 'linear-gradient(135deg, rgba(0, 0, 100 , .5), rgba(60, 34, 60, .4))'
-    src: assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/cover.jpg
-twitter_card: assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/thumbnail.jpeg
+    src: assets/images/2020-08-04-implementing-and-debugging-custom-msbuild-tasks/cover.jpg
+twitter_card: assets/images/2020-08-04-implementing-and-debugging-custom-msbuild-tasks/thumbnail.jpeg
 ---
 
 <script>
@@ -266,17 +266,17 @@ The **`.props` file should be imported at the very beginning** of the project fi
 
 With [JetBrains Rider](https://jetbrains.com/rider) we can use [run configurations](https://www.jetbrains.com/help/rider/Run_Debug_Configuration.html) to make this process more convenient. In the first configuration `Publish CustomTasks`, we will **publish the MSBuild task project**:
 
-![Publishing MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-publish.png){:width="750px" .shadow}
+![Publishing MSBuild Tasks via Run Configuration](/assets/images/2020-08-04-implementing-and-debugging-custom-msbuild-tasks/run-configuration-publish.png){:width="750px" .shadow}
 
 In a second configuration `Run CustomTasks` we will depend on the first one, and also call `MSBuild.dll /t:Clean;Restore;Pack /p:CustomTasksEnabled=True` to **invoke MSBuild on the test project**:
 
-![Running MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-run.png){:width="750px" .shadow}
+![Running MSBuild Tasks via Run Configuration](/assets/images/2020-08-04-implementing-and-debugging-custom-msbuild-tasks/run-configuration-run.png){:width="750px" .shadow}
 
 Note that this is the place when we need to override the `CustomTasksEnabled` property to execute our task. Also we should **make an educated choice of which targets should be invoked**. If our task integrates with the `Restore` target, then we really need to execute `Clean` before, because otherwise it may be skipped for consecutive builds.
 
 Now that we're all set up, we can use the `Run CustomTasks` configuration to finally debug our task implementation:
 
-![Running Custom MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/debug.gif){:width="750px" .shadow}
+![Running Custom MSBuild Tasks via Run Configuration](/assets/images/2020-08-04-implementing-and-debugging-custom-msbuild-tasks/debug.gif){:width="750px" .shadow}
 
 ## Troubleshooting MSBuild
 
@@ -284,8 +284,8 @@ Sooner or later we will run into issues with our MSBuild integration, especially
 
 <div class="swiper swiper-demo swiper-demo--image" style="max-width: 600px">
   <div class="swiper__wrapper">
-    <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/project-properties.png"/></div>
-    <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/project-imports.png"/></div>
+    <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-08-04-implementing-and-debugging-custom-msbuild-tasks/project-properties.png"/></div>
+    <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-08-04-implementing-and-debugging-custom-msbuild-tasks/project-imports.png"/></div>
   </div>
   <div class="swiper__button swiper__button--prev fas fa-chevron-left"></div>
   <div class="swiper__button swiper__button--next fas fa-chevron-right"></div>
@@ -305,7 +305,7 @@ Another benefit is that when testing our task on large projects that imply a tim
 
 For developers on Windows there is a **special surprise in JetBrains Rider**! We can right-click the test project, choose _Advanced Build Actions_ and execute _Rebuild Selected Projects with Diagnostics_:
 
-![Running Custom MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/structured-log-viewer.gif){:.shadow}
+![Running Custom MSBuild Tasks via Run Configuration](/assets/images/2020-08-04-implementing-and-debugging-custom-msbuild-tasks/structured-log-viewer.gif){:.shadow}
 
 Given that Structured Log Viewer can already run on [Avalonia UI](https://github.com/AvaloniaUI/Avalonia/), maybe we can see the same feature also for macOS and Linux soon.
 
