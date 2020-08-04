@@ -54,7 +54,7 @@ window.Lazyload.js(SOURCES.jquery, function() {
   }
 </style>
 
-***TL;DR: Custom MSBuild tasks can be hard at first, but with a few tricks and tools we can make the implementation, packaging and debugging process much easier. A sample project is available [matkoch/custom-msbuild-task](https://github.com/matkoch/custom-msbuild-task).***
+***TL;DR: Custom MSBuild tasks can be hard at first, but with a few tricks and tools we can make the implementation, packaging and debugging process much easier. A sample project is [available on GitHub](https://github.com/matkoch/custom-msbuild-task).***
 
 Much of the tooling around .NET projects ends up having to integrate with MSBuild, the _low-level_ build system in the .NET ecosystem. A few examples of these tools are:
 
