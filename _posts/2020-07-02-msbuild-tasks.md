@@ -1,5 +1,5 @@
 ---
-title: Implementing, Wiring and Debugging Custom MSBuild Tasks
+title: Implementing and Debugging Custom MSBuild Tasks
 tags:
 - MSBuild
 - NuGet
@@ -54,13 +54,9 @@ window.Lazyload.js(SOURCES.jquery, function() {
   }
 </style>
 
-***TL;DR: ***
+***TL;DR: Custom MSBuild tasks can be hard at first, but with a few tricks and tools we can make the implementation, packaging and debugging process much easier. A sample project is available [matkoch/custom-msbuild-task](https://github.com/matkoch/custom-msbuild-task).***
 
-- Integrating with MSBuild is inevitable
-- Some hurdles for creating NuGet package
-
-<!-- TODO: or even right from the start -->
-At some point, much of the tooling around .NET projects ends up having to integrate with MSBuild, the _low-level_ build system in the .NET ecosystem. Examples of these tools are:
+Much of the tooling around .NET projects ends up having to integrate with MSBuild, the _low-level_ build system in the .NET ecosystem. A few examples of these tools are:
 
 - [Refit](https://github.com/reactiveui/refit) – REST APIs are generated based on interface declarations [before compilation](https://github.com/reactiveui/refit/blob/master/Refit/targets/refit.targets)
 - [Fody](https://github.com/Fody/Fody) – IL code gets rewritten [after compilation](https://github.com/Fody/Fody/blob/master/Fody/Fody.targets) to [add null-checks](https://github.com/Fody/NullGuard), [merge assemblies to a single file](https://github.com/Fody/Costura), [notify on property changes](https://github.com/Fody/PropertyChanged) and [much more](https://github.com/Fody/Home/blob/master/pages/addins.md)
@@ -180,7 +176,7 @@ Defining the `CustomTasksAssembly` (Line 4) does not only help us to not repeat 
 
 ## Creating the NuGet Package
 
-As already mentioned, we won't pack the MSBuild tasks project directly, but have another project `MainLibrary` **include the task infrastructure in its package**. In order to load the `CustomTasks.targets` file from the previous section, we create another `MainLibrary.props` and `MainLibrary.targets` file in our `MainLibrary` project (TODO: that gets [automatically included](https://docs.microsoft.com/nuget/create-packages/creating-a-package#include-msbuild-props-and-targets-in-a-package)):
+As already mentioned, we won't pack the MSBuild tasks project directly, but have another project `MainLibrary` **include the task infrastructure in its package**. In order to load the `CustomTasks.targets` file from the previous section, we create another `MainLibrary.props` and `MainLibrary.targets` file in our `MainLibrary` project:
 
 {% highlight xml linenos %}
 <?xml version="1.0" encoding="utf-8"?>
@@ -194,27 +190,22 @@ As already mentioned, we won't pack the MSBuild tasks project directly, but have
 </Project>
 {% endhighlight %}
 
-In the `.props` file, we're defining a property `CustomTasksDirectory` that points to the directory containing our task. Note that we need to **take the MSBuild runtime into account** by checking `MSBuildRuntimeType` (Line 5-6). A project targeting `netcoreapp2.1` would still use .NET Framework for running MSBuild inside Visual Studio, while the same project would use MSBuild for .NET Core when compiling via `dotnet build` from the command-line. In the `.targets` file, we will import the `CustomTasks.targets` file from the embedded directory: 
+In the `.props` file, we're defining a property `CustomTasksDirectory` that points to the directory containing our task. Note that we need to **take the MSBuild runtime into account** by checking `MSBuildRuntimeType` (Line 5-6). A project targeting `netcoreapp2.1` would still use .NET Framework for running MSBuild inside Visual Studio, while the same project would use MSBuild for .NET Core when compiling via `dotnet build` from the command-line. I.e., it must not be subject to [framework version folder structure](https://docs.microsoft.com/en-us/nuget/create-packages/supporting-multiple-target-frameworks#framework-version-folder-structure). In the `.targets` file, we will import the `CustomTasks.targets` file: 
 
 {% highlight xml linenos %}
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Import Project="$(CustomTasksDirectory)\CustomTasks.targets" Condition="'$(CustomTasksEnabled)' != 'False'" />
+
 </Project>
 {% endhighlight %}
 
-Note that we add a condition to check if `CustomTasksEnabled` is enabled (Line 9). This little trick allows us to **easily opt-out from attaching the task**. Faulty MSBuild tasks have a high chance to completely break a referencing project and to cause confusion about where the error originates from:
+We also add a condition to check if `CustomTasksEnabled` is enabled (Line 4). This little trick allows us to **easily opt-out from attaching the task**. Faulty MSBuild tasks have a high chance to completely break a referencing project and to cause confusion about where the error originates from:
 
 <div class="tweet" tweetID="1072394313592647684">I really try to like @JetBrainsRider - but I just don’t have enough time for it...</div>
-  pack our package, we need to run `dotnet publish` on the tasks project for both target frameworks:
 
-{% highlight batch linenos %}
-dotnet publish --framework netcoreapp2.1
-dotnet publish --framework net472
-{% endhighlight %}
-
-
+As one of the last steps, we **define the package structure** in our `MainLibrary.csproj` project file:
 
 {% highlight xml linenos %}
 <ItemGroup Condition="'$(TargetFramework)' == ''">
@@ -227,7 +218,13 @@ dotnet publish --framework net472
 </ItemGroup>
 {% endhighlight %}
 
-On pitfall for me was that loading the MSBuild task is not subject to [NuGet's support multiple .NET versions](https://docs.microsoft.com/en-us/nuget/create-packages/supporting-multiple-target-frameworks), meaning that when we switch our target framework from `net47` to `netcoreapp2.1`, it won't use a different 
+It is important to remember, that to properly create the package, we first need to call `dotnet publish` for the supported target frameworks. The complete **list of invocations** should be follows: 
+
+{% highlight batch linenos %}
+dotnet publish --framework netcoreapp2.1
+dotnet publish --framework net472
+dotnet pack
+{% endhighlight %}
 
 ## Debugging a Task
 
@@ -235,9 +232,9 @@ Let's get to the most interesting part of how we can **effectively debug MSBuild
 
 <div class="tweet" tweetID="1183638078767927297">Is there a decent workflow for writing MSBuild tasks? Finally looking at adding a proper MSBuild task to FunctionMonkey (it currently uses a console app - that'll stay too). Writing it seems straightforward.... debugging it looks like it might be painful.</div>
 
-Indeed, with the **console application approach**, things are rather easy. <!-- TODO: INPUT DATA --> On Windows we can call `System.Diagnostics.Debugger.Launch()`, which **fires up the Just-In-Time Debugger** so that we can attach to the process. By default, this will use the [Visual Studio JIT Debugger](https://docs.microsoft.com/en-us/visualstudio/debugger/debug-using-the-just-in-time-debugger?view=vs-2019), but we can also [configure JetBrains Rider as the Just-In-Time Debugger](https://blog.jetbrains.com/dotnet/2019/04/16/edit-continue-just-time-debugging-debugger-improvements-rider-2019-1/). As of now, this strategy is [not supported on Linux/macOS](https://github.com/dotnet/runtime/issues/38427). The best workaround I've found is to call `SpinWait.SpinUntil(() => Debugger.IsAttached)`, which will wait until the debugger is actually attached. This also has the benefit that we don't break on the `Debugger.Launch` statement.
+Indeed, with the **console application approach**, things are rather easy. On Windows we can call `System.Diagnostics.Debugger.Launch()`, which **fires up the Just-In-Time Debugger** so that we can attach to the process. By default, this will use the [Visual Studio JIT Debugger](https://docs.microsoft.com/en-us/visualstudio/debugger/debug-using-the-just-in-time-debugger?view=vs-2019), but we can also [configure JetBrains Rider as the Just-In-Time Debugger](https://blog.jetbrains.com/dotnet/2019/04/16/edit-continue-just-time-debugging-debugger-improvements-rider-2019-1/). As of now, this strategy is [not supported on Linux/macOS](https://github.com/dotnet/runtime/issues/38427). The best workaround I've found is to call `SpinWait.SpinUntil(() => Debugger.IsAttached)`, which will wait until the debugger is actually attached.
 
-Taking the **custom MSBuild task approach**, we have a bit more footwork to do. In contrast to using `PackageReference`, the`.targets` and `.props` files **aren't automatically imported** when using a `ProjectReference` in another test project. We could create an actual package, but that has the unpleasant side-effect of getting persisted in our global NuGet cache:
+Taking the **custom MSBuild task approach**, we have a bit more footwork to do. Referencing a package via `PackageReference`, their main `.props` and `.targets` files get [automatically included](https://docs.microsoft.com/nuget/create-packages/creating-a-package#include-msbuild-props-and-targets-in-a-package). This is not the case when using `ProjectReference` on the same project! We could create an actual package, but that has the unpleasant side-effect of getting persisted in our global NuGet cache:
 
 <div class="tweet" tweetID="965325828455321600">I want to point to to a nupckg file directly ideally. The problem with local feeds is that packages get cached.</div>
 
@@ -253,7 +250,7 @@ Deleting from the cache, or incrementing versions – all those are rather poor 
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <CustomTasksEnabled Condition="'$(CustomTasksEnabled)' == ''">False</CustomTasksEnabled>
-    <CustomTasksDirectory>$(MSBuildThisFileDirectory)\..\source\Nuke.MSBuildTasks\bin\Debug\netcoreapp2.1\publish</CustomTasksDirectory>
+    <CustomTasksDirectory>$(MSBuildThisFileDirectory)\..\CustomTasks\bin\Debug\netcoreapp2.1\publish</CustomTasksDirectory>
   </PropertyGroup>
 
   <ItemGroup>
@@ -265,27 +262,27 @@ Deleting from the cache, or incrementing versions – all those are rather poor 
 </Project>
 {% endhighlight %}
 
-The **`.props` file should be imported at the very beginning** of the project file (Line 3), allowing to set default property values. Meanwhile, the **`.targets` file should be important at the very end** of the project file (Line 16), to ensure the task is run with the relevant input values. Here, we will also utilize our trick from the previous section, and set a default for `EnableCustomTasks` (Line 8), which can either be overridden from the outside (hence the condition) or manually changed to **test behavior in the IDE**. We should also not forget about adjusting the `CustomTasksDirectory` property to **point to the local version** of our task.
+The **`.props` file should be imported at the very beginning** of the project file (Line 3), allowing to set default property values. Meanwhile, the **`.targets` file should be important at the very end** of the project file (Line 16), to ensure the task is run with the relevant input values. Here, we will also utilize our trick from the previous section, and set a default for `CustomTasksEnabled` (Line 8), which can either be overridden from the outside (hence the condition) or manually changed to **test behavior in the IDE**. We should also not forget about adjusting the `CustomTasksDirectory` property to **point to the local version** of our task.
 
 With [JetBrains Rider](https://jetbrains.com/rider) we can use [run configurations](https://www.jetbrains.com/help/rider/Run_Debug_Configuration.html) to make this process more convenient. In the first configuration `Publish CustomTasks`, we will **publish the MSBuild task project**:
 
 ![Publishing MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-publish.png){:width="750px" .shadow}
 
-In a second configuration `Run CustomTasks` we will depend on the first one, and also call `MSBuild.dll /t:Clean;Restore;Pack /p:NukeMSBuildIntegration=True` to **invoke MSBuild on the test project**:
+In a second configuration `Run CustomTasks` we will depend on the first one, and also call `MSBuild.dll /t:Clean;Restore;Pack /p:CustomTasksEnabled=True` to **invoke MSBuild on the test project**:
 
 ![Running MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-run.png){:width="750px" .shadow}
 
-Note that this is the place when we need to override the `EnableCustomTasks` property to execute our task. Also we should **make an educated choice of which targets should be invoked**. If our task integrates with the `Restore` target, then we really need to execute `Clean` before, because otherwise it may be skipped for consecutive builds.
+Note that this is the place when we need to override the `CustomTasksEnabled` property to execute our task. Also we should **make an educated choice of which targets should be invoked**. If our task integrates with the `Restore` target, then we really need to execute `Clean` before, because otherwise it may be skipped for consecutive builds.
 
 Now that we're all set up, we can use the `Run CustomTasks` configuration to finally debug our task implementation:
 
-![Running MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/run-configuration-list.png){:width="750px" .shadow}
+![Running Custom MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/debug.gif){:width="750px" .shadow}
 
 ## Troubleshooting MSBuild
 
 Sooner or later we will run into issues with our MSBuild integration, especially regarding the `.props` and `.targets` files. We might reference a wrong property, forget about escaping, or just have a typo in our identifiers. The _Project Properties_ dialog is a good place to start investigations and to see **evaluated properties and imports** for a project file:
 
-<div class="swiper swiper-demo swiper-demo--image" style="max-width: 550px">
+<div class="swiper swiper-demo swiper-demo--image" style="max-width: 600px">
   <div class="swiper__wrapper">
     <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/project-properties.png"/></div>
     <div class="swiper__slide"><img class="lightbox-ignore" src="../../../../assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/project-imports.png"/></div>
@@ -298,7 +295,7 @@ Using the common keyboard shortcut, we can also easily **copy values from grid c
 
 <div class="tweet" tweetID="1284026601416654848">2 years ago I rewrote our entire build pipeline in mostly msbuild. Once I learned about structured log viewer my estimations were cut in half. MSBuild has become a lot more of a regular programming task since then.</div>
 
-The Structured Log Viewer operates on [binary log files](https://docs.microsoft.com/visualstudio/msbuild/obtaining-build-logs-with-msbuild#save-a-binary-log), which can be created by passing `/binaryLogger:output.binlog` to the MSBuild invocation. Binary log files provide the **highest level of completeness and verbosity**, even compared to most-diagnostic level for text logs. Imports of files and execution of targets are **hierarchically visualized using a tree view**. Particularly when looking for a suitable target to integrate our own using `BeforeTargets` or `AfterTargets`, we can also view the [flattened temporal order view](https://twitter.com/KirillOsenkov/status/1192209843630665728).
+The Structured Log Viewer operates on [binary log files](https://docs.microsoft.com/visualstudio/msbuild/obtaining-build-logs-with-msbuild#save-a-binary-log), which can be created by passing `/binaryLogger:output.binlog` to the MSBuild invocation. Binary log files provide the **highest level of completeness and verbosity**, even compared to most-diagnostic level for text logs. Imports of files and execution of targets are **hierarchically visualized using a tree view**. Particularly when trying to find a proper [target build order](https://docs.microsoft.com/visualstudio/msbuild/target-build-order) for our integration, we can easily check on the [flattened temporal order view](https://twitter.com/KirillOsenkov/status/1192209843630665728).
 
 <div class="tweet" tweetID="1192209843630665728">The latest MSBuild Log Viewer adds a new option to display targets in one flat list chronologically, it may be easier to see in which order the targets actually ran:</div>
 
@@ -306,11 +303,11 @@ Another benefit is that when testing our task on large projects that imply a tim
 
 <div class="tweet" tweetID="1030638751951638529">Soon in MSBuild Structured Log Viewer: run or debug MSBuild tasks by using the exact parameter values from the binlog! "Replay" tasks in isolation outside of the build.</div>
 
-For developers on Windows there is a **special surprise in JetBrains Rider**! Try right-clicking the test project, and choose _Advanced Build Actions  
+For developers on Windows there is a **special surprise in JetBrains Rider**! We can right-click the test project, choose _Advanced Build Actions_ and execute _Rebuild Selected Projects with Diagnostics_:
 
-## Conclusion
+![Running Custom MSBuild Tasks via Run Configuration](/assets/images/2020-02-11-implementing-wiring-and-debugging-custom-msbuild-tasks/structured-log-viewer.gif){:.shadow}
 
-
+Given that Structured Log Viewer can already run on [Avalonia UI](https://github.com/AvaloniaUI/Avalonia/), maybe we can see the same feature also for macOS and Linux soon.
 
 ## Acknowledgements
 
