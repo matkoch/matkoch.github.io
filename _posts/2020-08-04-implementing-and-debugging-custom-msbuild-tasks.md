@@ -54,9 +54,9 @@ window.Lazyload.js(SOURCES.jquery, function() {
   }
 </style>
 
-***TL;DR: Custom MSBuild tasks can be hard at first, but with a few tricks and tools we can make the implementation, packaging and debugging process much easier. A sample project is [available on GitHub](https://github.com/matkoch/custom-msbuild-task).***
+***TL;DR: Custom MSBuild tasks can be hard at first. With a few tricks and tools the process of implementing, packaging and debugging the infrastructure can be greatly simplified. A sample project is [available on GitHub](https://github.com/matkoch/custom-msbuild-task).***
 
-Much of the tooling around .NET projects ends up having to integrate with MSBuild, the _low-level_ build system in the .NET ecosystem. A few examples of these tools are:
+Much of the tooling around .NET projects ends up having to integrate with [MSBuild](https://docs.microsoft.com/visualstudio/msbuild/msbuild), the _low-level_ build system in the .NET ecosystem. A few examples of these tools are:
 
 - [Refit](https://github.com/reactiveui/refit) – REST APIs are generated based on interface declarations [before compilation](https://github.com/reactiveui/refit/blob/master/Refit/targets/refit.targets)
 - [Fody](https://github.com/Fody/Fody) – IL code gets rewritten [after compilation](https://github.com/Fody/Fody/blob/master/Fody/Fody.targets) to [add null-checks](https://github.com/Fody/NullGuard), [merge assemblies to a single file](https://github.com/Fody/Costura), [notify on property changes](https://github.com/Fody/PropertyChanged) and [much more](https://github.com/Fody/Home/blob/master/pages/addins.md)
@@ -75,7 +75,7 @@ When we want hook into the execution of MSBuild, we have several options:
 
 - [Inline Tasks](https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-roslyncodetaskfactory) – We can write code fragments directly into `.targets` files. They will be compiled into tasks by the `RoslynCodeTaskFactory` and executed by MSBuild when run. This is great for drafting ideas, but falls short in maintainability and debugging.
 - [Exec Tasks](https://docs.microsoft.com/visualstudio/msbuild/exec-task) – Any executable can be invoked in a similar way to `Process.Start`. We can capture output, validate exit codes, or define regular expressions for custom error/warning messages. However, we will miss some integration points, and if we need to get complex data _out_ of the process, we'll have to [encode it in a single line](https://github.com/nuke-build/nuke/blob/37503dffe64a1a4a2aac62758dfd4d601e7cb65e/source/Nuke.MSBuildTaskRunner/Program.cs#L163) and [decode it in the target](https://github.com/nuke-build/nuke/blob/37503dffe64a1a4a2aac62758dfd4d601e7cb65e/source/Nuke.MSBuildTaskRunner/Nuke.MSBuildTaskRunner.targets#L42-L54).
-- [Custom Tasks](https://docs.microsoft.com/visualstudio/msbuild/task-writing) – We can operate with MSBuild infrastruture directly, including `ITask`, `IBuildEngine`, and `ITaskItem` objects. This allows us to log error/warning/info events, inspect item groups with their [metadata](https://docs.microsoft.com/visualstudio/msbuild/msbuild-well-known-item-metadata), and create more object-like results.
+- [Custom Tasks](https://docs.microsoft.com/visualstudio/msbuild/task-writing) – We can operate with MSBuild infrastruture directly, including `ITask`, `IBuildEngine`, and `ITaskItem` objects. This allows us to log error/warning/info events, inspect item groups with their [metadata](https://docs.microsoft.com/visualstudio/msbuild/msbuild-well-known-item-metadata), create more object-like results, and rely on [integrated caching mechanism](https://docs.microsoft.com/visualstudio/msbuild/incremental-builds).
 
 Since **custom tasks are the most scalable solution**, we will put focus on them for the rest of this article.
 
@@ -117,7 +117,7 @@ As already hinted, our task assembly will likely have dependencies to other proj
 
 <div class="tweet" tweetID="882946773332803584">task assemblies that have dependencies on other assemblies is really messy in MSBuild 15. Working around it could be its own blog post</div>
 
-Meanwhile we're at MSBuild 16, and some of the [problems that Nate described](https://natemcmaster.com/blog/2017/11/11/msbuild-task-with-dependencies/) in his blog have already been addressed. I am by no means an expert in properly resolving dependencies, but [Andrew Arnott](https://twitter.com/aarnott) came up with the `ContextAwareTask` – originally [used in Nerdbank.GitVersion](https://github.com/dotnet/Nerdbank.GitVersioning/blob/3e4e1f8249ba70fd576b524ce12398ee398884fc/src/Nerdbank.GitVersioning.Tasks/ContextAwareTask.cs) – and it's working out great for many folks:
+Meanwhile we're at MSBuild 16, and some of the [problems that Nate described](https://natemcmaster.com/blog/2017/11/11/msbuild-task-with-dependencies/) in his blog have already been addressed. I am by no means an expert in properly resolving dependencies, but [Andrew Arnott](https://twitter.com/aarnott) came up with the `ContextAwareTask` – originally [used in Nerdbank.GitVersion](https://github.com/dotnet/Nerdbank.GitVersioning/blob/3e4e1f8249ba70fd576b524ce12398ee398884fc/src/Nerdbank.GitVersioning.Tasks/ContextAwareTask.cs) – which is working out great for many folks:
 
 {% highlight batch linenos %}
 using System;
@@ -172,7 +172,7 @@ In this next step we'll **wire up the task implementation in a `.targets` file**
 </Project>
 {% endhighlight %}
 
-Defining the `CustomTasksAssembly` (Line 4) does not only help us to not repeat ourselves when we reference multiple tasks from the same assembly (Line 7), but is also great for debugging, as we'll see later. Also note that we're using a couple of [well-known MSBuild properties](https://docs.microsoft.com/visualstudio/msbuild/msbuild-reserved-and-well-known-properties) like `MSBuildThisFileDirectory` and `MSBuildThisFileName` to avoid magic strings being scattered around our file. Following best practices makes renaming or relocating the task more effortless! The task invocation also uses the `ContinueOnError` property (Line 17) – one of the [common properties available to all task elements](https://docs.microsoft.com/visualstudio/msbuild/task-element-msbuild). 
+Defining the `CustomTasksAssembly` (Line 5) does not only help us to not repeat ourselves when we reference multiple tasks from the same assembly (Line 8), but is also great for debugging, as we'll see later. Also note that we're using a couple of [well-known MSBuild properties](https://docs.microsoft.com/visualstudio/msbuild/msbuild-reserved-and-well-known-properties) like `MSBuildThisFileDirectory` and `MSBuildThisFileName` to avoid magic strings being scattered around our file. Following best practices makes renaming or relocating the task more effortless! The task invocation also uses the `ContinueOnError` property (Line 18) – one of the [common properties available to all task elements](https://docs.microsoft.com/visualstudio/msbuild/task-element-msbuild). 
 
 ## Creating the NuGet Package
 
@@ -218,7 +218,7 @@ As one of the last steps, we **define the package structure** in our `MainLibrar
 </ItemGroup>
 {% endhighlight %}
 
-It is important to remember, that to properly create the package, we first need to call `dotnet publish` for the supported target frameworks. The complete **list of invocations** should be follows: 
+It is important to remember, that to properly create the package, we first need to call `dotnet publish` for the supported target frameworks. The complete **list of invocations** should be as follows: 
 
 {% highlight batch linenos %}
 dotnet publish --framework netcoreapp2.1
@@ -268,7 +268,7 @@ With [JetBrains Rider](https://jetbrains.com/rider) we can use [run configuratio
 
 ![Publishing MSBuild Tasks via Run Configuration](/assets/images/2020-08-04-implementing-and-debugging-custom-msbuild-tasks/run-configuration-publish.png){:width="750px" .shadow}
 
-In a second configuration `Run CustomTasks` we will depend on the first one, and also call `MSBuild.dll /t:Clean;Restore;Pack /p:CustomTasksEnabled=True` to **invoke MSBuild on the test project**:
+In a second configuration `Run CustomTasks` we will depend on the first one (see _Before launch_), and call `MSBuild.dll /t:Clean;Restore;Pack /p:CustomTasksEnabled=True` to **invoke MSBuild on the test project**:
 
 ![Running MSBuild Tasks via Run Configuration](/assets/images/2020-08-04-implementing-and-debugging-custom-msbuild-tasks/run-configuration-run.png){:width="750px" .shadow}
 
@@ -295,7 +295,7 @@ Using the common keyboard shortcut, we can also easily **copy values from grid c
 
 <div class="tweet" tweetID="1284026601416654848">2 years ago I rewrote our entire build pipeline in mostly msbuild. Once I learned about structured log viewer my estimations were cut in half. MSBuild has become a lot more of a regular programming task since then.</div>
 
-The Structured Log Viewer operates on [binary log files](https://docs.microsoft.com/visualstudio/msbuild/obtaining-build-logs-with-msbuild#save-a-binary-log), which can be created by passing `/binaryLogger:output.binlog` to the MSBuild invocation. Binary log files provide the **highest level of completeness and verbosity**, even compared to most-diagnostic level for text logs. Imports of files and execution of targets are **hierarchically visualized using a tree view**. Particularly when trying to find a proper [target build order](https://docs.microsoft.com/visualstudio/msbuild/target-build-order) for our integration, we can easily check on the [flattened temporal order view](https://twitter.com/KirillOsenkov/status/1192209843630665728).
+The Structured Log Viewer operates on [binary log files](https://docs.microsoft.com/visualstudio/msbuild/obtaining-build-logs-with-msbuild#save-a-binary-log), which can be created by passing `/binaryLogger:output.binlog` to the MSBuild invocation. Binary log files provide the **highest level of completeness and verbosity**, even compared to most-diagnostic level for text logs. Imports of files and execution of targets are **hierarchically visualized using a tree view**. Particularly when trying to find a proper [target build order](https://docs.microsoft.com/visualstudio/msbuild/target-build-order) for our integration, we can easily check on the **flattened temporal order view**:
 
 <div class="tweet" tweetID="1192209843630665728">The latest MSBuild Log Viewer adds a new option to display targets in one flat list chronologically, it may be easier to see in which order the targets actually ran:</div>
 
