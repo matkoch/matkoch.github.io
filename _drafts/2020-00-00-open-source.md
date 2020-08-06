@@ -38,3 +38,6 @@ Oh and to be even more clear - the .net OSS ecosystem was a huge part of what st
 
 https://twitter.com/serialseb/status/1280940112264802304
 @serialseb: Microsoft is actively destroying .net opens-source communities it does not control in impunity. That trend has accelerated in recent times. No one's stopping it, most of us are now bystanders of this slaughter, and it will get worse. Don't talk to me about f’in’dations right now.
+
+
+- https://calebporzio.com/sponsorware
