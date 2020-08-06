@@ -103,6 +103,7 @@ killall Finder
 sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText "l33t!"
 
 brew cask install enpass
+brew cask install 1password
 brew cask install alfred
 brew cask install bartender
 brew cask install bettertouchtool
@@ -152,9 +153,16 @@ brew cask install adoptopenjdk8
 git clone git@github.com:matkoch/resharper-plugins ~/code/resharper-plugins
 git clone git@github.com:matkoch/matkoch.github.io ~/code/blog
 git clone git@github.com:matkoch/thumbnail-generator ~/code/thumbnail-generator
-git clone git@github.com:nuke-build/nuke ~/code/nuke
-cd ~/code/nuke;              nuke generate-global-solution
-cd ~/code/resharper-plugins; nuke generate-global-solution
+git clone git@github.com:matkoch/nuke ~/code/nuke
+git clone git@github.com:matkoch/ferdi-youtrack ~/Library/Application\ Support/Ferdi/recipes/dev/youtrack
+git clone git@github.com:matkoch/ferdi-jetbrains-space ~/Library/Application\ Support/Ferdi/recipes/dev/jetbrains-space
+
+cd ~/code/nuke
+git remote add upstream git@github.com:nuke-build/nuke
+nuke generate-global-solution
+
+cd ~/code/resharper-plugins
+nuke generate-global-solution
 ```
 
 ## Other Tools
