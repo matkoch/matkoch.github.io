@@ -28,9 +28,8 @@ brew cask install font-roboto
 brew cask install font-cascadia
 brew cask install font-fira-code
 brew cask install font-source-code-pro
-brew cask install font-firacode-nerd-font
-brew cask install font-sourcecodepro-nerd-font
-brew cask install font-meslolg-nerd-font
+brew cask install font-fira-code-nerd-font
+brew cask install font-meslo-lg-nerd-font
 
 # https://github.com/romkatv/powerlevel10k
 brew cask install iterm2
@@ -66,8 +65,8 @@ default_browser="com.mozilla.firefox"
 #default_browser = "com.brave.Browser"
 #default_browser = "com.microsoft.edgemac"
 
-duti -s ${default_browser} public.html all
-duti -s ${default_browser} public.xhtml all
+#duti -s ${default_browser} public.html all
+#duti -s ${default_browser} public.xhtml all
 duti -s ${default_browser} http all
 duti -s ${default_browser} https all
 ```
@@ -104,12 +103,15 @@ sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText "
 
 brew cask install enpass
 brew cask install 1password
+brew cask install dropbox
+brew cask install marta
 brew cask install alfred
 brew cask install bartender
 brew cask install bettertouchtool
 brew cask install avibrazil-rdm
 brew cask install ferdi
 brew cask install spotify
+brew cask install fantastical
 ```
 
 ## Development
@@ -129,6 +131,15 @@ duti -s com.microsoft.VSCode .dotsettings all
 duti -s com.microsoft.VSCode .cs all
 duti -s com.microsoft.VSCode .csproj all
 duti -s com.microsoft.VSCode .nuspec all
+duti -s com.microsoft.VSCode .json all
+duti -s com.microsoft.VSCode .xml all
+duti -s com.microsoft.VSCode .yaml all
+duti -s com.microsoft.VSCode .yml all
+duti -s com.microsoft.VSCode .sh all
+duti -s com.microsoft.VSCode .css all
+duti -s com.microsoft.VSCode .js all
+duti -s com.microsoft.VSCode .kt all
+duti -s com.microsoft.VSCode .java all
 # .nupkg ?
 
 code --install-extension ms-dotnettools.csharp
@@ -173,8 +184,6 @@ mas install 488764545    # The Clock
 mas install 1056643111   # Clocker
 mas install 1444383602   # GoodNotes 5
 
-brew cask install fantastical
-brew cask install dropbox
 brew cask install taskwarrior-pomodoro
 brew cask install grammarly
 brew cask install tunnelblick
