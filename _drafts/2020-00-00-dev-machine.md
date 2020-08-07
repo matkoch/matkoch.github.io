@@ -11,6 +11,7 @@
 ```
 brew install git
 brew install svn
+brew install mc
 brew install tmux                 # https://github.com/tmux/tmux/wiki
 brew install tree                 # https://github.com/dbazile/gnu-tree-macos
 brew install htop                 # https://hisham.hm/htop/
@@ -21,6 +22,7 @@ brew install duti                 # https://github.com/moretension/duti/
 brew install mas                  # https://github.com/mas-cli/mas
 brew install dockutil
 brew install the_silver_searcher  # https://github.com/ggreer/the_silver_searcher
+brew install ack
 
 # https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
 brew tap homebrew/cask-fonts
@@ -112,6 +114,9 @@ brew cask install avibrazil-rdm
 brew cask install ferdi
 brew cask install spotify
 brew cask install fantastical
+
+brew tap homebrew/cask-drivers
+brew cask install logitech-options
 ```
 
 ## Development
