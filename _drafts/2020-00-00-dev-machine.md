@@ -181,7 +181,7 @@ nuke generate-global-solution
 ## Other Tools
 
 ```
-mas install 975937182 # Fantastical - Calendar & Tasks
+mas install 975937182    # Fantastical - Calendar & Tasks
 mas install 488764545    # The Clock
 mas install 1056643111   # Clocker
 mas install 1444383602   # GoodNotes 5
