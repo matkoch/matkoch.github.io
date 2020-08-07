@@ -161,6 +161,8 @@ brew cask install adoptopenjdk8
 ## Repositories
 
 ```
+ssh-add -K ~/.ssh/id_rsa
+
 git clone git@github.com:matkoch/resharper-plugins ~/code/resharper-plugins
 git clone git@github.com:matkoch/matkoch.github.io ~/code/blog
 git clone git@github.com:matkoch/thumbnail-generator ~/code/thumbnail-generator
@@ -179,7 +181,7 @@ nuke generate-global-solution
 ## Other Tools
 
 ```
-# mas install 975937182 # Fantastical - Calendar & Tasks
+mas install 975937182 # Fantastical - Calendar & Tasks
 mas install 488764545    # The Clock
 mas install 1056643111   # Clocker
 mas install 1444383602   # GoodNotes 5
