@@ -125,6 +125,7 @@ brew cask install logitech-options
 brew cask install jetbrains-toolbox
 brew cask install visual-studio-code
 
+# $(osascript -e 'id of app "Visual Studio Code"')
 # http://seriot.ch/resources/utis_graph/utis_graph.pdf
 duti -s com.microsoft.VSCode public.plain-text all
 duti -s com.microsoft.VSCode public.unix-executable all
@@ -145,7 +146,7 @@ duti -s com.microsoft.VSCode .css all
 duti -s com.microsoft.VSCode .js all
 duti -s com.microsoft.VSCode .kt all
 duti -s com.microsoft.VSCode .java all
-# .nupkg ?
+duti -s com.apple.archiveutility .nupkg all
 
 code --install-extension ms-dotnettools.csharp
 code --install-extension cssho.vscode-svgviewer
@@ -190,6 +191,7 @@ mas install 975937182    # Fantastical - Calendar & Tasks
 mas install 488764545    # The Clock
 mas install 1056643111   # Clocker
 mas install 1444383602   # GoodNotes 5
+mas install 933627574    # Silicio 3 for Spotify + iTunes
 
 brew cask install taskwarrior-pomodoro
 brew cask install grammarly
