@@ -98,9 +98,11 @@ defaults write com.apple.menuextra.battery ShowPercent -string "YES"
 #defaults write com.apple.menuextra.battery ShowTime -string "YES"
 defaults write com.apple.dock mru-spaces -bool false # Spaces rearrange
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 defaults write com.apple.Finder FXPreferredViewStyle -string "clmv"                         # Nlsv, icnv, clmv, Flwv
 defaults write com.apple.finder NewWindowTargetPath -string "PfHm"                          # https://www.jamf.com/jamf-nation/discussions/30370/solved-setting-finder-to-open-new-windows-to-onedrive-folder-via-script
 #defaults write /Library/Preferences/com.apple.security GKAutoRearm -bool false             # https://www.defaults-write.com/disable-gatekeeper-on-your-mac/#more-1305
+# find / -name ".DS_Store" -exec rm {} \;
 killall Finder
 
 sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText "l33t!"
