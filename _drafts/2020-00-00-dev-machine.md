@@ -205,6 +205,7 @@ brew cask install royal-tsx
 
 brew cask install camtasia
 brew cask install snagit
+brew cask install gifox
 brew cask install gimp
 brew cask install vlc
 brew install imagemagick
