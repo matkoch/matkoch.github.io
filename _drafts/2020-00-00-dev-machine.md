@@ -223,13 +223,13 @@ brew cask install streamlabs-obs
 
 | Key Combination       | Action                    |
 | --------------------- |:-------------------------:|
+| Command + Left        | Send Hex Codes: 0x01      |
+| Command + Right       | Send Hex Codes: 0x05      |
 | Command + Backspace   | Send Hex Codes: 0x15      |
+| Option + Left         | Send Escape Sequence b    |
+| Option + Right        | Send Escape Sequence f    |
 | Option + Backspace    | Send Hex Codes: 0x1b 0x08 |
 | Command + Z           | Send Hex Codes: 0x1f      |
-| Option + Left         | Send Escape Sequence b    |
-| Command + Left        | Send Hex Codes: 0x01      |
-| Option + Right        | Send Escape Sequence f    |
-| Command + Left        | Send Hex Codes: 0x05      |
 
 - https://gist.github.com/squarism/ae3613daf5c01a98ba3a
 - https://medium.com/@gveloper/using-iterm2s-built-in-integration-with-tmux-d5d0ef55ec30
