@@ -221,15 +221,15 @@ brew cask install streamlabs-obs
 ```
 
 
-| Key Combination       | Action                    |
-| --------------------- |:-------------------------:|
-| Command + Left        | Send Hex Codes: 0x01      |
-| Command + Right       | Send Hex Codes: 0x05      |
-| Command + Backspace   | Send Hex Codes: 0x15      |
-| Option + Left         | Send Escape Sequence b    |
-| Option + Right        | Send Escape Sequence f    |
-| Option + Backspace    | Send Hex Codes: 0x1b 0x08 |
-| Command + Z           | Send Hex Codes: 0x1f      |
+| Key Combination       | Action                      |
+| --------------------- |:---------------------------:|
+| Command + Left        | Send Hex Codes: `0x01`      |
+| Command + Right       | Send Hex Codes: `0x05`      |
+| Command + Backspace   | Send Hex Codes: `0x15`      |
+| Option + Left         | Send Escape Sequence `b`    |
+| Option + Right        | Send Escape Sequence `f`    |
+| Option + Backspace    | Send Hex Codes: `0x1b 0x08` |
+| Command + Z           | Send Hex Codes: `0x1f`      |
 
 - https://gist.github.com/squarism/ae3613daf5c01a98ba3a
 - https://medium.com/@gveloper/using-iterm2s-built-in-integration-with-tmux-d5d0ef55ec30
@@ -239,3 +239,4 @@ brew cask install streamlabs-obs
 - https://apple.stackexchange.com/questions/382098/how-to-enable-tap-to-click-using-keyboard-only
 - http://www.defaults-write.com/
 - https://marketmix.com/de/mac-osx-umfassende-liste-der-terminal-defaults-commands/
+- https://stackoverflow.com/questions/6205157/iterm-2-how-to-set-keyboard-shortcuts-to-jump-to-beginning-end-of-line
