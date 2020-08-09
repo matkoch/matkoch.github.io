@@ -231,6 +231,14 @@ brew cask install streamlabs-obs
 | Option + Backspace    | Send Hex Codes: `0x1b 0x08` |
 | Command + Z           | Send Hex Codes: `0x1f`      |
 
+| Key Combination       | Action                      |
+| --------------------- |:---------------------------:|
+| Control + R           | Refresh active panel        |
+| Control + I / Tab     | Switch Panels               |
+| Control + U           | Swap Panels                 |
+| Control + T           | Select/Unselect Item        |
+| Control + J           | Refresh active panel        |
+
 - https://gist.github.com/squarism/ae3613daf5c01a98ba3a
 - https://medium.com/@gveloper/using-iterm2s-built-in-integration-with-tmux-d5d0ef55ec30
 - mas install 1254981365 # Contrast
