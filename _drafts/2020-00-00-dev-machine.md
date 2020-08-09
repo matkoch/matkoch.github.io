@@ -240,3 +240,4 @@ brew cask install streamlabs-obs
 - http://www.defaults-write.com/
 - https://marketmix.com/de/mac-osx-umfassende-liste-der-terminal-defaults-commands/
 - https://stackoverflow.com/questions/6205157/iterm-2-how-to-set-keyboard-shortcuts-to-jump-to-beginning-end-of-line
+- https://gist.github.com/nobitagit/729fc16b8c16edb9a2fe390d6f312c66
