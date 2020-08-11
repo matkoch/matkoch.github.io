@@ -177,6 +177,7 @@ git clone git@github.com:matkoch/resharper-plugins ~/code/resharper-plugins
 git clone git@github.com:matkoch/matkoch.github.io ~/code/blog
 git clone git@github.com:matkoch/thumbnail-generator ~/code/thumbnail-generator
 git clone git@github.com:matkoch/nuke ~/code/nuke
+git clone git@github.com:JetBrains/jetbrains_guide ~/code/jetbrains-guide
 git clone git@github.com:matkoch/ferdi-youtrack ~/Library/Application\ Support/Ferdi/recipes/dev/youtrack
 git clone git@github.com:matkoch/ferdi-jetbrains-space ~/Library/Application\ Support/Ferdi/recipes/dev/jetbrains-space
 
