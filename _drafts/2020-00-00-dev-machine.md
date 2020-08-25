@@ -23,6 +23,8 @@ brew install mas                  # https://github.com/mas-cli/mas
 brew install dockutil
 brew install the_silver_searcher  # https://github.com/ggreer/the_silver_searcher
 brew install ack
+brew install youtube-dl           # https://github.com/ytdl-org/youtube-dl
+brew install ffmpeg
 
 # https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
 brew tap homebrew/cask-fonts
