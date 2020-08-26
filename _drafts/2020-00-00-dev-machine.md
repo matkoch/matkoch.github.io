@@ -217,6 +217,8 @@ brew install imagemagick
 brew cask install slack
 brew cask install skype
 brew cask install telegram
+brew cask install zoomus
+brew cask install microsoft-teams
 
 brew cask install obs
 brew cask install obs-virtualcam
