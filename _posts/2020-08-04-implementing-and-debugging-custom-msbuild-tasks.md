@@ -54,7 +54,15 @@ window.Lazyload.js(SOURCES.jquery, function() {
   }
 </style>
 
-***TL;DR: Custom MSBuild tasks can be hard at first. With a few tricks and tools the process of implementing, packaging and debugging the infrastructure can be greatly simplified. A sample project is [available on GitHub](https://github.com/matkoch/custom-msbuild-task).***
+MSBuild is part of every .NET developer's life in working with projects and solutions. It's the system that ultimately invokes tools like the C# compiler or NuGet. Sometimes it makes sense to integrate additional tools into the MSBuild execution pipeline, also known as custom MSBuild tasks. However, implementing a custom task can be very daunting. Even advanced users are often running into issues when packaging, wiring or debugging their task in the full infrastructure. In this session, we'll walk through my personal setup for implementing custom tasks and look at a few tricks and tools that can be used to simplify our work.
+ 
+ 
+ can be very scary looking at the 
+ 
+ 
+ Authoring these custom tasks can be hard at first, but with a few tricks and tools the process of implementing, testing, and debugging the infrastructure can be greatly simplified.
+
+***TL;DR: MSBuild is at the heart of every .NET project. It's the system that ultimately invokes tools like NuGet or the C# compiler. Other tools can be integrated via custom MSBuild tasks, however, working with these can be very daunting at first. Knowing a few tricks and tools, the process of implementing, packaging, and debugging a custom task can be greatly simplified. A sample project is [available on GitHub](https://github.com/matkoch/custom-msbuild-task).***
 
 Much of the tooling around .NET projects ends up having to integrate with [MSBuild](https://docs.microsoft.com/visualstudio/msbuild/msbuild), the _low-level_ build system in the .NET ecosystem. A few examples of these tools are:
 
