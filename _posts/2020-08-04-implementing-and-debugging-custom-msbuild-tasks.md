@@ -67,7 +67,7 @@ Some of the scenarios that involve code generation could eventually move to [Sou
 
 <div class="tweet" tweetID="1258485353070989312">It should be available for debugging, its a pain to debug this thing but much nicer than writing an msbuild task.</div>
 
-Clearly that sets the mood for what a pleasure it is to write an MSBuild task 😅
+Clearly that sets the mood for what a pleasure it is to write an MSBuild task! 😅
 
 ## MSBuild Integration Options
 
