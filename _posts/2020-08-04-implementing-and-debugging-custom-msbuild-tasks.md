@@ -54,7 +54,7 @@ window.Lazyload.js(SOURCES.jquery, function() {
   }
 </style>
 
-***TL;DR: MSBuild is at the heart of every .NET project. It's the system that ultimately invokes tools like NuGet or the C# compiler. Other tools can be integrated via custom MSBuild tasks, however, working with these can be very daunting at first. Knowing a few tricks and tools, the process of implementing, packaging, and debugging a custom task can be greatly simplified. A sample project is [available on GitHub](https://github.com/matkoch/custom-msbuild-task).***
+***TL;DR: MSBuild is at the heart of every .NET project. It's the system that ultimately invokes tools like NuGet or the C# compiler. Additional tools can be integrated via custom MSBuild tasks, however, working with these can be very daunting at first. Knowing a few tricks and tools, the process of implementing, packaging, and debugging a custom task can be greatly simplified. A sample project is [available on GitHub](https://github.com/matkoch/custom-msbuild-task).***
 
 Much of the tooling around .NET projects ends up having to integrate with [MSBuild](https://docs.microsoft.com/visualstudio/msbuild/msbuild), the _low-level_ build system in the .NET ecosystem. A few examples of these tools are:
 
