@@ -197,9 +197,10 @@ nuke generate-global-solution
 ```
 mas install 975937182    # Fantastical - Calendar & Tasks
 mas install 488764545    # The Clock
-mas install 1056643111   # Clocker
+# mas install 1056643111   # Clocker
 mas install 1444383602   # GoodNotes 5
 mas install 933627574    # Silicio 3 for Spotify + iTunes
+mas install 1319778037   # iStat Menus
 
 brew cask install taskwarrior-pomodoro
 brew cask install grammarly
