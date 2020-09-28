@@ -29,7 +29,7 @@ brew install ffmpeg
 # https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
 brew tap homebrew/cask-fonts
 brew cask install font-roboto
-brew cask install font-cascadia
+brew cask install font-cascadia-code
 brew cask install font-fira-code
 brew cask install font-source-code-pro
 brew cask install font-fira-code-nerd-font
@@ -165,8 +165,6 @@ dotnet tool install dnt --global
 
 brew cask install docker
 brew install mono
-
-brew tap adoptopenjdk/openjdk
 brew cask install adoptopenjdk8
 ```
 
