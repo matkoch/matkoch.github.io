@@ -43,19 +43,6 @@ echo 'source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme' >>! ~/.zshrc
 p10k configure
 ```
 
-## SSH Key
-
-```
-git config --global user.name "Matthias Koch"
-git config --global user.email "ithrowexceptions@gmail.com"
-ssh-keygen -t rsa -b 4096 -C "ithrowexceptions@gmail.com"
-eval "$(ssh-agent -s)"
-#touch ~/.ssh/config
-ssh-add -K ~/.ssh/id_rsa
-pbcopy < ~/.ssh/id_rsa.pub
-echo Paste key on https://github.com/settings/keys and https://jetbrains.team/m/Matthias.Koch/git
-```
-
 ## Browser
 
 ```
@@ -166,6 +153,20 @@ dotnet tool install dnt --global
 brew cask install docker
 brew install mono
 brew cask install adoptopenjdk8
+```
+
+## SSH Key
+
+```
+git config --global user.name "Matthias Koch"
+git config --global user.email "ithrowexceptions@gmail.com"
+ssh-keygen -t rsa -b 4096 -C "ithrowexceptions@gmail.com"
+eval "$(ssh-agent -s)"
+#touch ~/.ssh/config
+ssh-add -K ~/.ssh/id_rsa
+pbcopy < ~/.ssh/id_rsa.pub
+open https://github.com/settings/keys/new
+open https://jetbrains.team/m/Matthias.Koch/git
 ```
 
 ## Repositories
