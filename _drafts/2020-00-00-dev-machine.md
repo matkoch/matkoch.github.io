@@ -62,6 +62,22 @@ duti -s ${default_browser} http all
 duti -s ${default_browser} https all
 ```
 
+## Firefox layout
+
+/Users/matt/Library/Application Support/Firefox/Profiles/*.default-release/chrome/userChrome.css
+
+```
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#sidebar-box[sidebarcommand^="containertabs"] #sidebar-header {
+	display: none;
+}
+
+#TabsToolbar {
+    visibility: collapse !important;
+}
+```
+
 ## Productivity
 
 ```
