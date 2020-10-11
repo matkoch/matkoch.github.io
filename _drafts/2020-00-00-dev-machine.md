@@ -193,6 +193,7 @@ ssh-add -K ~/.ssh/id_rsa
 git clone git@github.com:matkoch/resharper-plugins ~/code/resharper-plugins
 git clone git@github.com:matkoch/matkoch.github.io ~/code/blog
 git clone git@github.com:matkoch/thumbnail-generator ~/code/thumbnail-generator
+git clone git@github.com:matkoch/custom-msbuild-task ~/code/custom-msbuild-task
 git clone git@github.com:matkoch/nuke ~/code/nuke
 git clone git@github.com:JetBrains/jetbrains_guide ~/code/jetbrains-guide
 git clone git@github.com:JetBrains/dotnet-tips ~/code/dotnet-tips
