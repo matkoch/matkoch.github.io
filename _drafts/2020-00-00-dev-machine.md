@@ -176,6 +176,7 @@ brew cask install adoptopenjdk8
 ```
 git config --global user.name "Matthias Koch"
 git config --global user.email "ithrowexceptions@gmail.com"
+#Set-Service ssh-agent -StartupType Manual
 ssh-keygen -t rsa -b 4096 -C "ithrowexceptions@gmail.com"
 eval "$(ssh-agent -s)"
 #touch ~/.ssh/config
