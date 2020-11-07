@@ -155,6 +155,8 @@ duti -s com.microsoft.VSCode .css all
 duti -s com.microsoft.VSCode .js all
 duti -s com.microsoft.VSCode .kt all
 duti -s com.microsoft.VSCode .java all
+duti -s com.microsoft.VSCode .png all
+duti -s com.microsoft.VSCode .svg all
 duti -s com.apple.archiveutility .nupkg all
 
 code --install-extension ms-dotnettools.csharp
@@ -229,6 +231,7 @@ brew cask install camtasia
 brew cask install snagit
 brew cask install gifox
 brew cask install gimp
+brew cask install inkscape
 brew cask install vlc
 brew install imagemagick
 
