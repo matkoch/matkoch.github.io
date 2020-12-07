@@ -93,7 +93,7 @@ While I see how YAML configuration can be attractive, I truly believe that for C
 - **It's declarative. Not imperative.** Not everyone needs that, but usually, there's a time when you want to iterate over a collection, filter items, write some more complex conditions, and other funky stuff. YAML is just the wrong format for that.
 - **It causes vendor lock-ins.** Each CI system has its very own format. Switching to a different CI system becomes non-trivial, as we have to rewrite the complete configuration.
 
-One more important fact is that many YAML configurations define **inline Bash or PowerShell scripts**. Typically, those make it hard to use any kind of IDE tooling. However, in JetBrains IDEs we can use [language injections](https://www.jetbrains.com/help/idea/using-language-injections.html) to partially solve this:
+One more important fact is that many YAML configurations define **inline Bash or PowerShell scripts**. Typically, those make it hard to use any kind of IDE tooling. However, in JetBrains IDEs we can use [language injections](https://www.jetbrains.com/help/idea/using-language-injections.html):
 
 <div class="tweet" tweetID="1273324833842122753">So I've recently been working on some @GitHub Actions with steps written in shell. The bad thing is that I was doing that in YAML, so the syntax highlighting... oh, wait a sec... Smiling face with sunglasses @intellijidea #github #intellij</div>
 

@@ -29,8 +29,7 @@ C# 8 introduced a lot of [new language features](https://docs.microsoft.com/dotn
 
 <div class="tweet" tweetID="1248589138292604929">Every time a new version of C# comes out, I quickly find ways to adopt the newly introduced features into my code. C# 8 is an exception. Question: have you used default interface members in your code yet?</div>
 
-In the context of build automation and specifically [NUKE](https://nuke.build), they have been [on my radar](https://youtu.be/SVD70QYvQ6I?t=2741) for some time already. After all, they 
-Available time made it hard, but thanks to [Thomas Unger](https://github.com/tunger) this dream has [finally come true](https://github.com/nuke-build/nuke/pull/427)! 👏
+In the context of build automation and specifically [NUKE](https://nuke.build), they have been [on my radar](https://youtu.be/SVD70QYvQ6I?t=2741) for some time already. After all, the available time made it hard, but thanks to [Thomas Unger](https://github.com/tunger) this dream has [finally come true](https://github.com/nuke-build/nuke/pull/427)! 👏
 
 ## Writing Build Components
 
